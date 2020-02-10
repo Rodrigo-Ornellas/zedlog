@@ -14,28 +14,38 @@
 
 <body>
     <div class="thebody">
-        <nav>
+
+        <header>
             <a href="{% url 'urlindex' %}">
                 <img id='logo' src="{% static 'img/zedlog.png' %}" alt="ZEDLOG Data Visualization">
             </a>
-            <ul>
-                {% comment %} <li><a href="{% url 'urllogout' %}">Logout</a></li> {% endcomment %}
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li>
-                <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
-                <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
-                <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
-                <li><a href="{% url 'urlgraph' %}"><i class="fas fa-chart-pie"></i></a></li>
-                <li><a href="{% url 'admin:index' %}"><i class="fas fa-cogs"></i></a></li>
-                <li class="userMenu"><span>{{ user }}</span><a href="{% url 'logout' %}">logout</a></li>
-                {% else %}
-                <li><a href="{% url 'login' %}">login</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle" >
+            <nav>
+                <ul>
+                    {% comment %} <li><a href="{% url 'urllogout' %}">Logout</a></li> {% endcomment %}
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li>
+                    <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
+                    <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
+                    <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
+                    <li><a href="{% url 'urlgraph' %}"><i class="fas fa-chart-pie"></i></a></li>
+                    <li><a href="{% url 'admin:index' %}"><i class="fas fa-cogs"></i></a></li>
+                    <li class="userMenu"><a href="{% url 'logout' %}">logout</a></li>
+                    {% comment %} <span>{{ user }}</span> {% endcomment %}
+                    {% else %}
+                    <li><a href="{% url 'login' %}">login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <label for="nav-toggle" class="nav-toggle-label">
+                <span></span>
+            </label>
+        </header>
+
         <main>
             {% block main %}
             {% endblock %}
+            <div class="push"></div>
         </main>
         <footer>
             <p><a href="http://rodster.website/">Rodster Development</a> &copy; 2020</p>

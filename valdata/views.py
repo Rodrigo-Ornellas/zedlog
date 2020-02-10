@@ -17,6 +17,9 @@ import io
 import os
 import urllib
 
+# ====== HOME PAGE ==================================================
+# ===================================================================
+
 
 def index(request):
     # =============================================
@@ -28,12 +31,12 @@ def index(request):
     data['user'] = request.user
     return render(request, 'valdata/index.html', data)
 
+
 # ====== PORTFILES ==================================================
 # ===================================================================
 
-
 def portFILES(request):
-    # PFILE_List
+    # PORT_List > working OK!
     # =============================================
     # this VIEW shows a list of files that have been uploaded
     # =============================================
@@ -45,7 +48,7 @@ def portFILES(request):
 
 
 def deleteFile(request, id):
-    # PFILE_Del
+    # PORT_Del > working OK!
     # =============================================
     # this VIEW deletes the selected item from
     # the database and the corresponding file from storage
@@ -75,7 +78,11 @@ def deleteFile(request, id):
 
 @login_required(login_url='login')
 def csvupload(request):
-    # PFILE_Upload
+    # PORT_Upload > working OK!
+    # =============================================
+    # this VIEW uploads the CSV file from the PORT
+    # and saves the date to the database
+    # =============================================
     prompt = {}
     template = "valdata/csvupload.html"
 
@@ -104,10 +111,142 @@ def csvupload(request):
 
 
 def csvdata(request):
+    # PFILE_Upload or PORT_upload
+    # =============================================
+    # this VIEW uploads the CSV file from the PORT
+    # and saves the date to the database
+    # =============================================
     data = {}
     data['user'] = request.user
     data['csv'] = PortCSV.objects.all()
     return render(request, 'valdata/csvdata.html', data)
+
+
+def makeJSON(field, vesselName):
+    query = field
+    # data fetched
+    # values_list('tipo', flat=True).filter(vessel="TSMN / 21")
+    # data = list(PortCSV.objects.values_list(query, flat=True))
+    data = list(PortCSV.objects.values_list(query, flat=True).filter(
+        vessel=vesselName))
+
+    # print(data)
+    # python dictionary that will contain the JSON object with the quantity of variations existing in the selected field
+    result = []
+
+    # intilize a null list
+    unique_list = []
+
+    # traverse for all elements
+    for item in data:
+        # check if exists in unique_list or not
+        if item not in unique_list:
+            unique_list.append(item)
+
+    # print(unique_list)
+    # print(data)
+    for item in unique_list:
+        myJSON = {}
+        myJSON['label'] = item
+        myJSON['value'] = data.count(item)
+        result.append(myJSON)
+
+    return result
+
+
+def saveCSV(request, passedFile):
+
+    # FILE OBJECT
+    print(passedFile.filename)
+    csv_file = passedFile.filename
+    # print('csvfile > {}'.format(csv_file.name))
+    # print('csvfile > {}'.format(os.path.join(
+    # settings.MEDIA_ROOT, '/port/',  csv_file['filename'].name)))
+
+    # ERROR treatment
+    # let's check if it is a csv file
+    # if not csv_file.name.endswith('.csv'):
+    #     return messages.error(request, 'THIS IS NOT A CSV FILE')
+
+    # START reading the file
+    data_set = csv_file.read().decode('UTF-8')
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    vesselName = ''
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+
+        # get the name of the VESSEL
+        if vesselName == '':
+            vesselName = column[11]
+
+        # column[15] = datetime.strftime(column[15], '%m-%d-%Y %H:%M:%S')
+        # column[15] = convertDate(column[15])
+        # CONVERTING the existing DATE format into the
+        if column[15] != '':
+            column[15] = convertDate(column[15])
+
+        # removing the second part of the name which is a number
+        if column[11] != '':
+            column[11] = column[11].split(' / ')[0]
+
+        _, created = PortCSV.objects.update_or_create(
+            # ** numero de identificacao do container
+            filefk=passedFile,
+            serial=column[0],
+            tipo=column[1],           # ** tipo e tamanho do container
+            location=column[4],       # trem / truck ou yard
+            full=column[6],           # freight kind = full ou empty
+            pod=column[7],            # ** pod = port of destination
+            position=column[8],       # posição no trem ou truck ou yard
+            booking=column[9],        # ** registro da ZIM
+            vessel=column[11],        # nome do navio
+            peso=column[12],          # peso total do container
+            carga=column[13],         # peso da carga
+            arrival=column[15],       # time of arrival to YARD
+            # em reparo ou onhold para proximo navio
+            onhold=column[16],
+            commodity=column[17],     # descrição da carga
+            haz=column[18],           # hazerdous material
+            reefer=column[19],        # quando necessita de refrigeração
+            ondock=column[21],        # arrived to terminal
+            oog=column[22]
+            # carga especial com dimensões especiais - necessita de procedimentos especiais
+        )
+
+    # csvDATA = PortCSV.objects.filter(vessel=vesselName)
+    # return csvDATA
+
+
+def convertDate(data):
+    # ============================================
+    # NOT a VIEW
+    # support function for the SAVECsv FUNCTION
+    # > converts date string to date object
+    # data sample
+    # 11-17-2018 4:41:35 PM
+    # 11-19-2018 11:19:22 AM
+    # ============================================
+
+    # splits the date string into date and time and PM/AM
+    check = data.split(' ')
+
+    # splits the time string into hour/minute/second
+    hora = check[1].split(':')
+
+    # fixes the hour to 24hour format
+    if check[-1] == 'PM' and hora[0] != '12':
+        hora[0] = int(hora[0]) + 12
+
+    if check[-1] == 'AM' and hora[0] == '12':
+        hora[0] = '00'
+
+    # puts the date string back together
+    data = str(check[0]) + str(' ') + str(hora[0]) + \
+        str(':') + str(hora[1]) + str(':') + str(hora[2])
+
+    return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
 
 
 def barTYPES(width, height, vessel):
@@ -318,133 +457,6 @@ def graph(request):
         'map': pod.render(),
         'pie2': arrivedPie.render(),
     })
-
-
-def makeJSON(field, vesselName):
-    query = field
-    # data fetched
-    # values_list('tipo', flat=True).filter(vessel="TSMN / 21")
-    # data = list(PortCSV.objects.values_list(query, flat=True))
-    data = list(PortCSV.objects.values_list(query, flat=True).filter(
-        vessel=vesselName))
-
-    # print(data)
-    # python dictionary that will contain the JSON object with the quantity of variations existing in the selected field
-    result = []
-
-    # intilize a null list
-    unique_list = []
-
-    # traverse for all elements
-    for item in data:
-        # check if exists in unique_list or not
-        if item not in unique_list:
-            unique_list.append(item)
-
-    # print(unique_list)
-    # print(data)
-    for item in unique_list:
-        myJSON = {}
-        myJSON['label'] = item
-        myJSON['value'] = data.count(item)
-        result.append(myJSON)
-
-    return result
-
-
-def saveCSV(request, passedFile):
-
-    # FILE OBJECT
-    print(passedFile.filename)
-    csv_file = passedFile.filename
-    # print('csvfile > {}'.format(csv_file.name))
-    # print('csvfile > {}'.format(os.path.join(
-    # settings.MEDIA_ROOT, '/port/',  csv_file['filename'].name)))
-
-    # ERROR treatment
-    # let's check if it is a csv file
-    # if not csv_file.name.endswith('.csv'):
-    #     return messages.error(request, 'THIS IS NOT A CSV FILE')
-
-    # START reading the file
-    data_set = csv_file.read().decode('UTF-8')
-    io_string = io.StringIO(data_set)
-    next(io_string)
-
-    # setup a stream which is when we loop through each line we are able to handle a data in a stream
-    vesselName = ''
-    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-
-        # get the name of the VESSEL
-        if vesselName == '':
-            vesselName = column[11]
-
-        # column[15] = datetime.strftime(column[15], '%m-%d-%Y %H:%M:%S')
-        # column[15] = convertDate(column[15])
-        # CONVERTING the existing DATE format into the
-        if column[15] != '':
-            column[15] = convertDate(column[15])
-
-        # removing the second part of the name which is a number
-        if column[11] != '':
-            column[11] = column[11].split(' / ')[0]
-
-        _, created = PortCSV.objects.update_or_create(
-            # ** numero de identificacao do container
-            filefk=passedFile,
-            serial=column[0],
-            tipo=column[1],           # ** tipo e tamanho do container
-            location=column[4],       # trem / truck ou yard
-            full=column[6],           # freight kind = full ou empty
-            pod=column[7],            # ** pod = port of destination
-            position=column[8],       # posição no trem ou truck ou yard
-            booking=column[9],        # ** registro da ZIM
-            vessel=column[11],        # nome do navio
-            peso=column[12],          # peso total do container
-            carga=column[13],         # peso da carga
-            arrival=column[15],       # time of arrival to YARD
-            # em reparo ou onhold para proximo navio
-            onhold=column[16],
-            commodity=column[17],     # descrição da carga
-            haz=column[18],           # hazerdous material
-            reefer=column[19],        # quando necessita de refrigeração
-            ondock=column[21],        # arrived to terminal
-            oog=column[22]
-            # carga especial com dimensões especiais - necessita de procedimentos especiais
-        )
-
-    # csvDATA = PortCSV.objects.filter(vessel=vesselName)
-    # return csvDATA
-
-
-def convertDate(data):
-    # ============================================
-    # NOT a VIEW
-    # support function for the SAVECsv FUNCTION
-    # > converts date string to date object
-    # data sample
-    # 11-17-2018 4:41:35 PM
-    # 11-19-2018 11:19:22 AM
-    # ============================================
-
-    # splits the date string into date and time and PM/AM
-    check = data.split(' ')
-
-    # splits the time string into hour/minute/second
-    hora = check[1].split(':')
-
-    # fixes the hour to 24hour format
-    if check[-1] == 'PM' and hora[0] != '12':
-        hora[0] = int(hora[0]) + 12
-
-    if check[-1] == 'AM' and hora[0] == '12':
-        hora[0] = '00'
-
-    # puts the date string back together
-    data = str(check[0]) + str(' ') + str(hora[0]) + \
-        str(':') + str(hora[1]) + str(':') + str(hora[2])
-
-    return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
 
 
 # def logout_view(request):
