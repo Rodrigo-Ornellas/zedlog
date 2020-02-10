@@ -1,0 +1,162 @@
+body {
+      margin: 0;
+      background-color: darkgray;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
+            sans-serif;
+}
+
+.thebody {
+      display: grid;
+      grid-template-rows: 10vh 80vh 10vh;
+}
+
+.wrapper {
+      width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+}
+
+.userMenu {
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: center;
+}
+
+.userMenu span {
+      padding-bottom: 0.5rem;
+}
+
+a:visited,
+a {
+      color: black;
+}
+
+ul {
+      list-style: none;
+}
+
+/* ================== BUTTON ================== */
+
+.deletebtn {
+      padding: 0.5rem 1rem;
+      background-color: red;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+      font-size: 11px;
+      border: 1px solid grey;
+}
+
+button,
+.botao:visited,
+.botao {
+      padding: 0.5rem 1rem;
+      background-color: coral;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+      font-size: 11px;
+      border: 1px solid grey;
+}
+
+.botaocancel {
+      padding: 0.5rem 1rem;
+      background-color: lightgrey;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+      font-size: 11px;
+      border: 1px solid grey;
+}
+
+button {
+      margin-right: 2rem;
+}
+
+/* ========================= NAVIGATION ========================= */
+
+nav {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      background-image: linear-gradient(to left, indigo, white);
+      /* position: fixed; */
+}
+
+#logo {
+      width: auto;
+      height: 50px;
+}
+
+footer,
+nav {
+      background-color: whitesmoke;
+      padding: 0.5rem 1rem;
+      /* display: flex;
+      flex-direction: column;
+      justify-content: center; */
+}
+
+nav ul {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-end;
+      align-items: center;
+}
+
+nav ul li {
+      /* padding: 0 2rem; */
+      width: 100px;
+      text-align: center;
+}
+
+.userMenu span,
+nav ul li a:visited,
+nav ul li a {
+      color: white;
+}
+
+/* ===================  TABLE  ========================= */
+table {
+      margin-bottom: 2rem;
+      /* border: 1px solid black; */
+}
+
+table th,
+table td {
+      /* border: 1px solid black; */
+      padding: 0 0.5rem;
+      font-weight: 400;
+      height: 2rem;
+      vertical-align: center;
+      text-align: left;
+      width: 200px;
+}
+
+table th {
+      background-color: coral;
+      color: white;
+}
+
+.tool {
+      border: 1px solid black;
+      border-radius: 5px;
+      background-color: whitesmoke;
+      padding: 1.5rem;
+}
+
+.tool h4 {
+      margin-top: 0;
+}
+
+.graphsWrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 1rem;
+}
+
+/* ===================  GRAPH  ========================= */
+
+#map-container {
+      grid-column: 1 / 3;
+}

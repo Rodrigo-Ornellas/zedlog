@@ -1,0 +1,19 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+<div id="csvupload" class="wrapper">
+
+    <h2>Upload CSV</h2>
+
+        <div class="tool">
+            <h4>Only accepts CSV files</h4>
+
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {{ form.as_p}}
+                <button type='submit'>Upload</button>
+            </form>
+        </div>
+    
+</div>    
+{% endblock %}

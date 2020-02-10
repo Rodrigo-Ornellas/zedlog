@@ -1,0 +1,31 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+
+<div id="shedule" class="wrapper">
+
+    <h2>Shedule Files</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>File Name</th>
+                <th>Date</th>
+                {% comment %} <th>Action</th> {% endcomment %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in data %}
+                <tr>
+                    <td>{{ file.uploaded_by }}</td>
+                    <td>{{ file.filename }}</td>
+                    <td>{{ file.date }}</td>
+                    {% comment %} <td><a class="deletebtn" href="{% url 'urldeletefile' file.id %}">delete</a></td> {% endcomment %}
+                </tr>        
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

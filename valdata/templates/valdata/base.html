@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ZIM Port System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static "fontawesome/css/all.min.css" %}" />
+    <script type="text/javascript" src="{% static 'fusioncharts/fusioncharts.js' %}"></script>
+</head>
+
+<body>
+    <div class="thebody">
+        <nav>
+            <a href="{% url 'urlindex' %}">
+                <img id='logo' src="{% static 'img/zimlogo.png' %}" alt="ZIM Data Visualization">
+            </a>
+            <ul>
+                {% comment %} <li><a href="{% url 'urllogout' %}">Logout</a></li> {% endcomment %}
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li>
+                <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
+                <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
+                <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
+                <li><a href="{% url 'urlgraph' %}"><i class="fas fa-chart-pie"></i></a></li>
+                <li><a href="{% url 'admin:index' %}"><i class="fas fa-cogs"></i></a></li>
+                <li class="userMenu"><span>{{ user }}</span><a href="{% url 'logout' %}">logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}">login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <main>
+            {% block main %}
+            {% endblock %}
+        </main>
+        <footer>
+            <p><a href="http://rodster.website/">Rodster Development</a> &copy; 2020</p>
+        </footer>
+    </div>
+</body>
+
+</html>

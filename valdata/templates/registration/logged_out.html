@@ -1,0 +1,10 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+
+<div id="loggedout" class="wrapper">
+  <h2>Logged out!</h2>  
+  
+  <a href="{% url 'login' %}">Click here to login again.</a>
+</div>
+{% endblock %}

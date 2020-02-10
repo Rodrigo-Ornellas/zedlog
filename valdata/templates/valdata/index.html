@@ -1,0 +1,35 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+<div id="index" class="wrapper">
+
+    <h2>Home</h2>
+    {% if user.is_authenticated %}
+
+    <div class="tool">
+        <h4>Upload Port Data</h4>
+        <p>Start here, by uploading a CSV file from the Port.</p>
+        <ol>
+            <li>Download from the PORT the list of containers</li>
+            <li>Open the file and remove the first lines</li>
+            <li>Save the file in CSV format</li>
+            <li>Click <a href="{% url 'urlcsvupload' %}">HERE</a> to upload the CSV file</li>
+        </ol>
+        <a class="botao" href="{% url 'urlcsvupload' %}">Upload CSV</a>
+    </div>
+
+
+    {% else %}
+
+    <div class="tool">
+        <h4>Welcome to ZIM PORT tools</h4>
+        <p>Web App to import and analize data from the ZIM shipping operation</p>
+        <p>This is not an official ZIM tool. It is a playground and Test/Development environment</p>
+        <h5>Tool Objective:</h5>
+        <p>This tool assists Logistic Analists to quickly identify issues in the list of containers when comparing Port and ZIM system data.</p>
+    </div>
+
+    {% endif%}
+
+</div>
+{% endblock %}

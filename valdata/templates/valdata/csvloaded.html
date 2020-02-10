@@ -1,0 +1,20 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+
+<div id="csvloaded" class="wrapper">
+
+    <h2>Uploaded CSV</h2>
+    <p>Number of records: {{ count }}</p>
+    {% if data %}
+
+        {% for d in data %}
+        <div>
+        <p>{{ d }}</p>
+        </div>
+        {% endfor %}
+
+    {% endif %}
+
+</div>    
+{% endblock %}

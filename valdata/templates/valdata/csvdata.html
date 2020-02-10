@@ -1,0 +1,34 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+<div id="csvdata" class="wrapper">
+
+    <h2>CSVData</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Container</th>
+                <th>Type</th>
+                <th>POD</th>
+                <th>Booking</th>
+                <th>Vessel</th>
+                <th>File ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for container in csv %}
+                <tr>
+                    <td>{{ container.serial }}</td>
+                    <td>{{ container.tipo }}</td>
+                    <td>{{ container.pod }}</td>
+                    <td>{{ container.booking }}</td>
+                    <td>{{ container.vessel }}</td>
+                    <td>{{ container.filefk }}</td>
+                </tr>        
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+{% endblock %}
