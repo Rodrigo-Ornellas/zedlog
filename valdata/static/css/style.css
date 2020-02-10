@@ -5,13 +5,13 @@ body {
             sans-serif;
 }
 
-.thebody {
+/* .thebody {
       display: grid;
       grid-template-rows: 10vh 80vh 10vh;
-}
+} */
 
 .wrapper {
-      width: 800px;
+      width: 1000px;
       margin: 0 auto;
       padding: 0 1rem;
 }
@@ -80,21 +80,13 @@ nav {
       flex-flow: row nowrap;
       justify-content: space-between;
       background-image: linear-gradient(to left, indigo, white);
-      /* position: fixed; */
+      height: 50px;
+      padding: 0.5rem 1rem;
 }
 
 #logo {
       width: auto;
       height: 50px;
-}
-
-footer,
-nav {
-      background-color: whitesmoke;
-      padding: 0.5rem 1rem;
-      /* display: flex;
-      flex-direction: column;
-      justify-content: center; */
 }
 
 nav ul {
@@ -108,6 +100,11 @@ nav ul li {
       /* padding: 0 2rem; */
       width: 100px;
       text-align: center;
+}
+
+footer {
+      background-color: whitesmoke;
+      padding: 0.5rem 1rem;
 }
 
 .userMenu span,
