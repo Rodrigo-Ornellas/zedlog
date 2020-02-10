@@ -132,3 +132,4 @@ server/
 xls/
 zip/
 .vscode/
+.DS_Store
