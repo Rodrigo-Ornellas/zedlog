@@ -13,7 +13,7 @@
                 <th>POD</th>
                 <th>Booking</th>
                 <th>Vessel</th>
-                <th>File ID</th>
+                {% comment %} <th>File ID</th> {% endcomment %}
             </tr>
         </thead>
         <tbody>
@@ -24,7 +24,7 @@
                     <td>{{ container.pod }}</td>
                     <td>{{ container.booking }}</td>
                     <td>{{ container.vessel }}</td>
-                    <td>{{ container.filefk }}</td>
+                    {% comment %} <td>{{ container.filefk }}</td> {% endcomment %}
                 </tr>        
             {% endfor %}
         </tbody>

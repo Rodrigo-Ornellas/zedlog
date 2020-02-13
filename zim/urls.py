@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
-from valdata.views import portFILES, csvupload, csvdata, graph, index, deleteFile
+from valdata.views import portFILES, csvupload, csvdata, graph, index, deleteFile, message
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
@@ -17,6 +17,7 @@ urlpatterns = [
     path('graph/', graph, name='urlgraph'),
     path('portfiles/delete/<int:id>', deleteFile, name='urldeletefile'),
     path('schedule/update', downloadSched, name='urlscheduleget'),
+    path('msg/<str:msg>', message, name='urlmessage'),
 
 ]
 

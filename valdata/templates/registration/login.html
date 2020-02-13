@@ -37,7 +37,8 @@
         </form>
         
         {# Assumes you setup the password_reset view in your URLconf #}
-        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+        <p>Only registered users can login.<br>Please contact the <a class="highlight" href="mailto:ornellas.rodrigo@gmail.com">tool administrator</a> to request access.</p>
+        
     </div>
 </div>
 {% endblock %}

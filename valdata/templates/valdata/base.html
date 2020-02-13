@@ -28,8 +28,8 @@
                     <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
                     <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
                     <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
-                    <li><a href="{% url 'urlgraph' %}"><i class="fas fa-chart-pie"></i></a></li>
-                    <li><a href="{% url 'admin:index' %}"><i class="fas fa-cogs"></i></a></li>
+                    <li><a href="{% url 'urlgraph' %}">Dashboard</a></li>
+                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
                     <li class="userMenu"><a href="{% url 'logout' %}">logout</a></li>
                     {% comment %} <span>{{ user }}</span> {% endcomment %}
                     {% else %}

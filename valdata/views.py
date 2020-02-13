@@ -90,14 +90,14 @@ def csvupload(request):
         form = PortFILEForm(request.POST, request.FILES)
         if form.is_valid():
             print(request.FILES)
-
-            instance = form.save(commit=False)
-            # saveCSV(request, request.FILES)
-            # instance = form.save(commit=False)
-            instance.uploaded_by = request.user
-            instance.save()
-            saveCSV(request, instance)
-            return redirect('urlportfiles')
+            try:
+                instance = form.save(commit=False)
+                instance.uploaded_by = request.user
+                instance.save()
+                saveCSV(request, instance)
+                return redirect('urlportfiles')
+            except:
+                return redirect('urlmessage', msg='Fatal Error: error while uploading file.')
 
     else:
         prompt['form'] = PortFILEForm()
@@ -108,6 +108,17 @@ def csvupload(request):
 
 # ====== END > PORTFILES ============================================
 # ===================================================================
+
+def message(request, msg):
+    # =============================================
+    # this VIEW shows an ERROR MESSAGE on the screen
+    # and button to go to the HOME Page
+    # =============================================
+    data = {}
+    data['msg'] = msg
+    print(msg)
+    template = "valdata/message.html"
+    return render(request, template, data)
 
 
 def csvdata(request):
