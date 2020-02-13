@@ -1,0 +1,1 @@
+web: gunicorn zim.wsgi --log-file -
