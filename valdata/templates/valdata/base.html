@@ -30,10 +30,10 @@
                     <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
                     <li><a href="{% url 'urlgraph' %}">Dashboard</a></li>
                     <li><a href="{% url 'admin:index' %}">Admin</a></li>
-                    <li class="userMenu"><a href="{% url 'logout' %}">logout</a></li>
+                    <li class="userMenu"><a href="{% url 'logout' %}">Logout</a></li>
                     {% comment %} <span>{{ user }}</span> {% endcomment %}
                     {% else %}
-                    <li><a href="{% url 'login' %}">login</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
                     {% endif %}
                 </ul>
             </nav>

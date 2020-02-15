@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
-from valdata.views import portFILES, csvupload, csvdata, graph, index, deleteFile, message
+from valdata.views import portFILES, csvupload, graph, index, deleteFile, message, csvdata
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings

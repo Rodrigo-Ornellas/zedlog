@@ -36,7 +36,7 @@ def index(request):
 # ===================================================================
 
 def portFILES(request):
-    # PORT_List > working OK!
+    # PORTFL_List > working OK!
     # =============================================
     # this VIEW shows a list of files that have been uploaded
     # =============================================
@@ -48,7 +48,7 @@ def portFILES(request):
 
 
 def deleteFile(request, id):
-    # PORT_Del > working OK!
+    # PORTFL_Del > working OK!
     # =============================================
     # this VIEW deletes the selected item from
     # the database and the corresponding file from storage
@@ -78,9 +78,9 @@ def deleteFile(request, id):
 
 @login_required(login_url='login')
 def csvupload(request):
-    # PORT_Upload > working OK!
+    # PORTFL_Upload > working OK!
     # =============================================
-    # this VIEW uploads the CSV file from the PORT
+    # this VIEW uploads the csv FILE from the PORT
     # and saves the date to the database
     # =============================================
     prompt = {}
@@ -110,6 +110,7 @@ def csvupload(request):
 # ===================================================================
 
 def message(request, msg):
+    # > working OK!
     # =============================================
     # this VIEW shows an ERROR MESSAGE on the screen
     # and button to go to the HOME Page
@@ -121,10 +122,20 @@ def message(request, msg):
     return render(request, template, data)
 
 
-def csvdata(request):
-    # PFILE_Upload or PORT_upload
+# ====== PORT CSV DATA ==============================================
+# ===================================================================
+
+# def PORTDT_Delete():
     # =============================================
-    # this VIEW uploads the CSV file from the PORT
+    # this VIEW does NOT exist.
+    # PORT DATA is DELETE automatically from DATABASE
+    # when corresponding PORT FILE is deleted
+    # =============================================
+
+def csvdata(request):
+    # PORTDT_Listdata
+    # =============================================
+    # this VIEW uploaded the csv DATA from the PORT
     # and saves the date to the database
     # =============================================
     data = {}
@@ -133,41 +144,14 @@ def csvdata(request):
     return render(request, 'valdata/csvdata.html', data)
 
 
-def makeJSON(field, vesselName):
-    query = field
-    # data fetched
-    # values_list('tipo', flat=True).filter(vessel="TSMN / 21")
-    # data = list(PortCSV.objects.values_list(query, flat=True))
-    data = list(PortCSV.objects.values_list(query, flat=True).filter(
-        vessel=vesselName))
-
-    # print(data)
-    # python dictionary that will contain the JSON object with the quantity of variations existing in the selected field
-    result = []
-
-    # intilize a null list
-    unique_list = []
-
-    # traverse for all elements
-    for item in data:
-        # check if exists in unique_list or not
-        if item not in unique_list:
-            unique_list.append(item)
-
-    # print(unique_list)
-    # print(data)
-    for item in unique_list:
-        myJSON = {}
-        myJSON['label'] = item
-        myJSON['value'] = data.count(item)
-        result.append(myJSON)
-
-    return result
-
-
 def saveCSV(request, passedFile):
-
-    # FILE OBJECT
+    # PORTDT_Savedata
+    # ================================================
+    # this function reads the CSV file that was UPLOADED
+    # and saves the PORT CSV DATA to the database
+    # this is not a VIEW that is called from a URL
+    # this view is called after the FILE has been UPLOADED
+    # ================================================
     print(passedFile.filename)
     csv_file = passedFile.filename
     # print('csvfile > {}'.format(csv_file.name))
@@ -231,6 +215,7 @@ def saveCSV(request, passedFile):
 
 
 def convertDate(data):
+    # PORTDT_formatdate
     # ============================================
     # NOT a VIEW
     # support function for the SAVECsv FUNCTION
@@ -258,6 +243,43 @@ def convertDate(data):
         str(':') + str(hora[1]) + str(':') + str(hora[2])
 
     return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
+
+# ====== END > PORTDATA ============================================
+# ===================================================================
+
+
+def makeJSON(field, vesselName):
+    # GRAPH_makejson
+    # =============================================
+    # SUPPORT function for the DASHBOARD graphs functionality
+    # =============================================
+    query = field
+    data = list(PortCSV.objects.values_list(query, flat=True).filter(
+        vessel=vesselName))
+
+    # print(data)
+    # python dictionary that will contain the JSON object
+    # with the quantity of variations existing in the selected field
+    result = []
+
+    # intilize a null list
+    unique_list = []
+
+    # traverse for all elements
+    for item in data:
+        # check if exists in unique_list or not
+        if item not in unique_list:
+            unique_list.append(item)
+
+    # print(unique_list)
+    # print(data)
+    for item in unique_list:
+        myJSON = {}
+        myJSON['label'] = item
+        myJSON['value'] = data.count(item)
+        result.append(myJSON)
+
+    return result
 
 
 def barTYPES(width, height, vessel):

@@ -153,31 +153,29 @@ if (DEBUG == True):
 # https://wsvincent.com/django-referencing-the-user-model/
 # AUTH_USER_MODEL = 'users.CustomUser'
 
-
-# HEROKU DEPLOY CONFIGURATION
-# ============================================================
-# https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_ROOT = os.path.join(BASE_DIR, 'valdata/static')
 STATIC_URL = '/static/'
+if False:
+    # HEROKU DEPLOY CONFIGURATION
+    # ============================================================
+    # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
 
-# Extra lookup directories for collectstatic to find static files
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'valdata/static'),
-)
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/1.11/howto/static-files/
+    PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
+    # STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'valdata/static')
 
-#  Add configuration for static files storage using whitenoise
-# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # Extra lookup directories for collectstatic to find static files
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'valdata/static'),
+    )
 
+    #  Add configuration for static files storage using whitenoise
+    # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Update Database Configuration in settings.py
-prod_db = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(prod_db)
+    # Update Database Configuration in settings.py
+    prod_db = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(prod_db)
 
-
-ALLOWED_HOSTS = ['dj-zedlog.herokuapp.com']
+    ALLOWED_HOSTS = ['dj-zedlog.herokuapp.com']
