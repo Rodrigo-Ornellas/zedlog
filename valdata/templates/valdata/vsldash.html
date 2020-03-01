@@ -1,0 +1,42 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+<div id="vsldash" class="wrapper">
+
+    <h2>Vessel Name: {{ vessel }}</h2>
+    <h3>Voyage: {{ voyage }}</h3>
+    <h3>Version: {{ version }}</h3>
+
+    <div class="numbers">
+        <div class="bookings box" style="background-color: {{ color }};">
+            <div class="icon">
+            {{ bookings.booking__count }}
+            </div>
+            <h4>Bookings</h4>
+        </div>
+        <div class="containers box" style="background-color: {{ color }};">
+            <div class="icon">
+            {{ containers.serial__count }}
+            </div>        
+            <h4>Containers</h4>
+        </div>
+        <div class="tweigth box" style="background-color: {{ color }};">
+            <div class="icon">
+            {{ tweight }} Kg
+            </div>
+            <h4>Total Weigth</h4>
+        </div>
+        <div class="cweigth box" style="background-color: {{ color }};">
+            <div class="icon">
+            {{ cweight }} Kg
+            </div>        
+            <h4>Load Weigth</h4>
+        </div>
+    </div>
+    <div class="graphs">
+        <div class="containertypes"></div>
+        <div class="pod"></div>
+    </div>
+    
+</div>
+{% endblock %}

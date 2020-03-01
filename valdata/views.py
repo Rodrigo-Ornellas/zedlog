@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib import messages
 from .forms import PortFILEForm
-from .models import PortFILE, PortCSV
+from .models import PortFILE, PortData, Vessels, PortName, Containers
 from django.contrib.auth import logout
 from django.conf import settings
 
@@ -16,6 +16,12 @@ import csv
 import io
 import os
 import urllib
+
+from django.db.models import Count
+from django.db.models import Sum
+from django.db.models import Q
+
+import random
 
 # ====== HOME PAGE ==================================================
 # ===================================================================
@@ -35,8 +41,10 @@ def index(request):
 # ====== PORTFILES ==================================================
 # ===================================================================
 
-def portFILES(request):
-    # PORTFL_List > working OK!
+@login_required(login_url='login')
+# def portFILES(request):
+def PORTFL_ListFiles(request):
+    # PORTFL_ListFiles > working OK!
     # =============================================
     # this VIEW shows a list of files that have been uploaded
     # =============================================
@@ -47,7 +55,8 @@ def portFILES(request):
     return render(request, 'valdata/portfiles.html', data)
 
 
-def deleteFile(request, id):
+# def deleteFile(request, id):
+def PORTFL_Del(request, id):
     # PORTFL_Del > working OK!
     # =============================================
     # this VIEW deletes the selected item from
@@ -55,9 +64,9 @@ def deleteFile(request, id):
     # =============================================
     file = PortFILE.objects.filter(pk=id)
     delFile = os.path.join(str(settings.MEDIA_ROOT), str(file[0].filename))
-    data = PortCSV.objects.filter(filefk=id)
+    data = PortData.objects.filter(filefk=id)
 
-    # 1) This deletes the DATA associated with the file from PORTCSV model.
+    # 1) This deletes the DATA associated with the file from PortData model.
     for row in data:
         row.delete()
         # print(row.serial)
@@ -77,7 +86,8 @@ def deleteFile(request, id):
 
 
 @login_required(login_url='login')
-def csvupload(request):
+# def csvupload(request):
+def PORTFL_Upload(request):
     # PORTFL_Upload > working OK!
     # =============================================
     # this VIEW uploads the csv FILE from the PORT
@@ -85,6 +95,7 @@ def csvupload(request):
     # =============================================
     prompt = {}
     template = "valdata/csvupload.html"
+    
 
     if request.method == 'POST':
         form = PortFILEForm(request.POST, request.FILES)
@@ -94,10 +105,11 @@ def csvupload(request):
                 instance = form.save(commit=False)
                 instance.uploaded_by = request.user
                 instance.save()
-                saveCSV(request, instance)
-                return redirect('urlportfiles')
+                PORTDT_SaveData(instance)
+                # return redirect('urlportfiles')
+                return redirect('urlvsllist')
             except:
-                return redirect('urlmessage', msg='Fatal Error: error while uploading file.')
+               return redirect('urlmessage', msg='Fatal Error: error while uploading file.')
 
     else:
         prompt['form'] = PortFILEForm()
@@ -132,20 +144,138 @@ def message(request, msg):
     # when corresponding PORT FILE is deleted
     # =============================================
 
-def csvdata(request):
-    # PORTDT_Listdata
+def RamdomColor():    
+    for i in range(1,20):
+        r = random.randint(0,120)
+
+    for i in range(1,20):        
+        g = random.randint(0,120)
+
+    for i in range(1,20):                
+        b = random.randint(0,120)
+
+    return str("rgb({},{},{});".format(r,g,b))
+
+def CheckVessel(codeVoyage):
+    # =============================================
+    # this VIEW does NOT exist.
+    # function called from PORTDT_SaveData to
+    # check if the VESSEL data already exists in the database
+    # returns either '' or Vessel ID (for Foreign Key)
+    # =============================================
+
+    # print(" code / voyage > {}".format(codeVoyage))
+    code = codeVoyage.split(' / ')[0]
+    voy = codeVoyage.split(' / ')[1]
+    color = RamdomColor()
+    print(color)
+    # print(" code > {}".format(code))
+    # print(" voyage > {}".format(voyage))
+
+    try:
+        # print('started')
+        vsl = Vessels.objects.get(vcode=code)
+        # print("vsl.checkID > {}".format(vsl.checkID))
+        newvsl = Vessels(vcode=code, voyage=voy, checkID=(vsl.checkID + 1), vcolor=vsl.vcolor)
+        newvsl.save()
+        # print("vsl > {}".format(vsl))
+        # print("vsl.code > {}".format(vsl.vcode))
+        # print('worked')
+    # except Content.DoesNotExist:
+    #     print('failed! > 1')
+    except:
+        print('failed! > 1 - CheckVessel')
+        try: 
+            # print('started2')
+            newvsl = Vessels(vcode=code, voyage=voy, checkID=1,vcolor=color)
+            newvsl.save()
+            # print("vsl > {}".format(vsl))
+            # print("vsl PK > {}".format(vsl.pk))
+            # print("vsl.code > {}".format(vsl.vcode))            
+            # print('ended2')
+        except:
+            print('failed! > 2 - CheckVessel')
+
+    return newvsl
+
+@login_required(login_url='login')
+def ListVessels(request):
+    # =============================================
+    # this VIEW lists all the trips
+    # function called from PORTDT_SaveData to
+    # check if the PORT data already exists in the database
+    # returns either '' or Port ID (for Foreign Key)
+    # =============================================    
+    data = {}
+    data['user'] = request.user
+    data['vsl'] = Vessels.objects.all()
+    return render(request, 'valdata/vsllist.html', data)
+
+
+
+def CheckPort(code):
+    # =============================================
+    # this VIEW does NOT exist.
+    # function called from PORTDT_SaveData to
+    # check if the PORT data already exists in the database
+    # returns either '' or Port ID (for Foreign Key)
+    # =============================================
+
+    try:
+        port = PortName.objects.get(pcode=code)
+    except:
+        print('failed! > 1 - CheckPort')
+        try:
+            port = PortName(pcode=code)
+            port.save()
+        except:
+            print('failed! > 2 - CheckPort')
+
+
+    return port, port.pcode
+
+
+def CheckContainer(zname, mod, dest):
+    # =============================================
+    # this VIEW does NOT exist.
+    # function called from PORTDT_SaveData to
+    # check if the CONTAINER data already exists in the database
+    # returns either '' or CONTAINER ID (for Foreign Key)
+    # =============================================
+    print("name > {} ***************".format(zname))
+    # print("name > {}".format(cname))
+    # print("ctype > {}".format(mod))
+    # print("dest > {}".format(dest.pk))
+    try:
+        container = Containers.objects.get(containerID=zname)
+    except:
+        print('failed! > 1 - CheckContainer')
+        try:
+            container = Containers(containerID=zname, ctype=mod, leftTo=dest, isActive=True)
+            container.save()
+        except:
+            print('failed! > 2 - CheckContainer <<<<<<')
+
+    return container
+
+
+@login_required(login_url='login')
+def PORTDT_ListData(request):
+    # def csvdata(request):
+    # PORTDT_ListData
     # =============================================
     # this VIEW uploaded the csv DATA from the PORT
     # and saves the date to the database
     # =============================================
     data = {}
     data['user'] = request.user
-    data['csv'] = PortCSV.objects.all()
+    data['csv'] = PortData.objects.all()
     return render(request, 'valdata/csvdata.html', data)
 
 
-def saveCSV(request, passedFile):
-    # PORTDT_Savedata
+def PORTDT_SaveData(passedFile):
+    # def saveCSV(request, passedFile):
+    # PORTDT_SaveData
     # ================================================
     # this function reads the CSV file that was UPLOADED
     # and saves the PORT CSV DATA to the database
@@ -169,37 +299,44 @@ def saveCSV(request, passedFile):
     next(io_string)
 
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
-    vesselName = ''
+    vesselID = ''
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
 
         # get the name of the VESSEL
-        if vesselName == '':
-            vesselName = column[11]
+        if vesselID == '':
+            vesselID = CheckVessel(column[11])
+            # vesselName = column[11]
+            print('1) vessel ID > {}'.format(vesselID.pk))
 
-        # column[15] = datetime.strftime(column[15], '%m-%d-%Y %H:%M:%S')
-        # column[15] = convertDate(column[15])
+        # Check and Update List of Ports in the DataBase
+        portObj, portNAME = CheckPort(column[7])
+        print('2) port name > {}'.format(portNAME))
+        print('2) port ID > {}'.format(portObj.pk))
+
+        # Check and Update List of Containers in the DataBase
+        contObject = CheckContainer(column[0], column[1], portObj)
+        print('3) container > {}'.format(contObject.containerID))
+
         # CONVERTING the existing DATE format into the
+        cDate = datetime.now()
         if column[15] != '':
-            column[15] = convertDate(column[15])
-
-        # removing the second part of the name which is a number
-        if column[11] != '':
-            column[11] = column[11].split(' / ')[0]
-
-        _, created = PortCSV.objects.update_or_create(
+            cDate = convertDate(column[15])
+            print(cDate)
+        
+        _, created = PortData.objects.update_or_create(
             # ** numero de identificacao do container
             filefk=passedFile,
-            serial=column[0],
+            vessel=vesselID,          # nome do navio
+            serial=contObject.pk,
             tipo=column[1],           # ** tipo e tamanho do container
             location=column[4],       # trem / truck ou yard
             full=column[6],           # freight kind = full ou empty
-            pod=column[7],            # ** pod = port of destination
+            pod=portObj,               # ** pod = port of destination
             position=column[8],       # posição no trem ou truck ou yard
             booking=column[9],        # ** registro da ZIM
-            vessel=column[11],        # nome do navio
             peso=column[12],          # peso total do container
             carga=column[13],         # peso da carga
-            arrival=column[15],       # time of arrival to YARD
+            arrival=cDate,            # time of arrival to YARD
             # em reparo ou onhold para proximo navio
             onhold=column[16],
             commodity=column[17],     # descrição da carga
@@ -209,9 +346,6 @@ def saveCSV(request, passedFile):
             oog=column[22]
             # carga especial com dimensões especiais - necessita de procedimentos especiais
         )
-
-    # csvDATA = PortCSV.objects.filter(vessel=vesselName)
-    # return csvDATA
 
 
 def convertDate(data):
@@ -225,6 +359,7 @@ def convertDate(data):
     # 11-19-2018 11:19:22 AM
     # ============================================
 
+    print('data conversion > {}'.format(data))
     # splits the date string into date and time and PM/AM
     check = data.split(' ')
 
@@ -248,13 +383,62 @@ def convertDate(data):
 # ===================================================================
 
 
+# ====== Vessel DashBoard ==============================================
+# ===================================================================
+
+@login_required(login_url='login')
+def vsldash(request, trip, ver):
+    # =============================================
+    # this VIEW shows a DASHBOARD of the 
+    # PORTDATA that has been uploaded
+    # =============================================
+    data = {}
+
+    # bookings = PortData.objects.all().count()
+
+    # Getting the name of the Vessel
+    # vessel = PortData.objects.get(voyage=trip)
+
+    # Getting the number of Bookings on this Vessel
+    bookings = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(Count('booking', distinct=True))
+
+    # Getting the number of Containers on this Vessel
+    containers = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(Count('serial', distinct=True))
+
+    # Adding the total weight of the Containers and Cargo
+    tweight = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(total_weights=Sum('peso'))
+    # Adding the total weight of the Containers and Cargo
+    cweight = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(total_weights=Sum('carga'))
+
+    # =============================================
+    print(bookings)
+    print(containers)
+    print(cweight)
+    print(tweight)
+    data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
+    data['bookings'] = bookings
+    data['containers'] = containers
+    data['voyage'] = trip
+    data['color'] = Vessels.objects.get(voyage=trip, checkID=ver).vcolor
+    data['version'] = ver
+    data['tweight'] = "{:,}".format(int(tweight['total_weights'])) 
+    data['cweight'] = "{:,}".format(int(cweight['total_weights'])) 
+
+    template = "valdata/vsldash.html"
+    return render(request, template, data)
+
+
+
+# ====== END > Vessel Dashboard ===================================================
+# ==========================================================================
+
 def makeJSON(field, vesselName):
     # GRAPH_makejson
     # =============================================
     # SUPPORT function for the DASHBOARD graphs functionality
     # =============================================
     query = field
-    data = list(PortCSV.objects.values_list(query, flat=True).filter(
+    data = list(PortData.objects.values_list(query, flat=True).filter(
         vessel=vesselName))
 
     # print(data)
@@ -307,6 +491,7 @@ def barTYPES(width, height, vessel):
     # Create an object for the column 2D chart using the FusionCharts class constructor
     return FusionCharts("column2d", "myFirstChart",
                         width, height, "bar-container", "json", barData)
+
 
 
 def graph(request):
@@ -538,7 +723,7 @@ def graph(request):
 
 #     # declaring template
 #     template = "valdata/csvupload.html"
-#     data = PortCSV.objects.all()
+#     data = PortData.objects.all()
 #     # prompt is a context variable that can have different values      depending on their context
 #     prompt = {
 #         'order': 'Please follow the order pre-defined!',
@@ -578,7 +763,7 @@ def graph(request):
 
 #         # print(column[15])
 #         context['count'] += 1
-#         _, created = PortCSV.objects.update_or_create(
+#         _, created = PortData.objects.update_or_create(
 #             serial=column[0],         # ** numero de identificacao do container
 #             tipo=column[1],           # ** tipo e tamanho do container
 #             location=column[4],       # trem / truck ou yard
@@ -600,8 +785,8 @@ def graph(request):
 #         )
 
 #     # print('Vessel Name: %s' % (vesselName))
-#     # context['data'] = PortCSV.objects.filter(vessel=vesselName)
-#     context['data'] = PortCSV.objects.all()
+#     # context['data'] = PortData.objects.filter(vessel=vesselName)
+#     context['data'] = PortData.objects.all()
 #     # print(context['data'])
 #     return render(request, template, context)
 

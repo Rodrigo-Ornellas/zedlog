@@ -1,0 +1,41 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+<div id="vsllist" class="wrapper">
+
+    <h2>Vessels</h2>
+
+    {% if vsl %}
+    {% for v in vsl %}
+    <a href="{% url 'urlvsldash' trip=v.voyage ver=v.checkID %}">
+        <div class="vessel" style="color: {{ v.vcolor }}">
+
+            <div class="left">
+                <i class="fas fa-ship"></i>
+                {% if v.saleDate != None %}
+                <div>{{ v.saleDate }}</div>
+                {% else %}
+                <div>Add Sale Date</div>
+                {% endif %}
+            </div>
+            <div class=" right">
+                <div class="top">
+                    <h3>{{ v.vcode }}</h3>
+                    <div>{{ v.voyage }}</div>
+                </div>
+                <div class="checked">
+                    <div>{{ v.checkedDate }}</div>
+                    <div class="version">v.{{ v.checkID }}</div>
+                </div>
+
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+
+    {% else %}
+    <p>No trips registered in the database.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

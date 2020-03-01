@@ -8,7 +8,7 @@
     <title>ZEDLOG Port System</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css'%}">
-    <link rel="stylesheet" type="text/css" href="{% static "fontawesome/css/all.min.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.min.css' %}" />
     <script type="text/javascript" src="{% static 'fusioncharts/fusioncharts.js' %}"></script>
 </head>
 
@@ -28,7 +28,9 @@
                     <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
                     <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
                     <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
-                    <li><a href="{% url 'urlgraph' %}">Dashboard</a></li>
+                    {% comment %} <li><a href="{% url 'urlgraph' %}">Dashboard</a></li> {% endcomment %}
+                    <li><a href="{% url 'urlvsllist' %}">Trips</a></li>
+                    {% comment %} <li><a href="{% url 'urlvsldash' trip=21 %}">Vessel</a></li> {% endcomment %}
                     <li><a href="{% url 'admin:index' %}">Admin</a></li>
                     <li class="userMenu"><a href="{% url 'logout' %}">Logout</a></li>
                     {% comment %} <span>{{ user }}</span> {% endcomment %}

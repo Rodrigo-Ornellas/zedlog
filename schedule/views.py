@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from urllib.request import urlretrieve
 import os
-import PyPDF2
+# import PyPDF2
 import random
 import string
 
