@@ -146,13 +146,13 @@ def message(request, msg):
 
 def RamdomColor():    
     for i in range(1,20):
-        r = random.randint(0,120)
+        r = random.randint(0,200)
 
     for i in range(1,20):        
-        g = random.randint(0,120)
+        g = random.randint(0,200)
 
     for i in range(1,20):                
-        b = random.randint(0,120)
+        b = random.randint(0,255)
 
     return str("rgb({},{},{});".format(r,g,b))
 
@@ -382,6 +382,22 @@ def convertDate(data):
 # ====== END > PORTDATA ============================================
 # ===================================================================
 
+@login_required(login_url='login')
+def ListContainers(request, trip, ver):
+    # =============================================
+    # this VIEW lists all the trips
+    # function called from PORTDT_SaveData to
+    # check if the PORT data already exists in the database
+    # returns either '' or Port ID (for Foreign Key)
+    # =============================================    
+    data = {}
+    data['user'] = request.user
+    data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
+    data['trip'] = trip
+    data['ver'] = ver
+    data['container'] = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver)
+    return render(request, 'valdata/contlist.html', data)
+
 
 # ====== Vessel DashBoard ==============================================
 # ===================================================================
@@ -407,26 +423,53 @@ def vsldash(request, trip, ver):
 
     # Adding the total weight of the Containers and Cargo
     tweight = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(total_weights=Sum('peso'))
+
     # Adding the total weight of the Containers and Cargo
     cweight = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(total_weights=Sum('carga'))
+
+    # Adding the total weight of the Containers and Cargo
+    vdata = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver)
+
+    # Summary of Container Type
+    ctype = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('tipo').annotate(c=Count('tipo')).order_by('-c')
+    typeKey = []
+    typeValue = []
+    print(ctype)
+    for k in ctype:
+        print("key > {}".format(k['tipo']))
+        # zz = k['tipo'].encode('ascii', errors='ignore').decode('utf8')
+        # zz = k['tipo'].encode('ascii', errors='ignore').decode('utf-8')
+        # typeKey.append("{}".format(zz))
+        typeKey.append(k["tipo"])
+
+    for v in ctype:
+        print("Val > {}".format(v['c']))
+        typeValue.append(v['c'])
 
     # =============================================
     print(bookings)
     print(containers)
     print(cweight)
     print(tweight)
-    data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
-    data['bookings'] = bookings
-    data['containers'] = containers
-    data['voyage'] = trip
-    data['color'] = Vessels.objects.get(voyage=trip, checkID=ver).vcolor
-    data['version'] = ver
-    data['tweight'] = "{:,}".format(int(tweight['total_weights'])) 
-    data['cweight'] = "{:,}".format(int(cweight['total_weights'])) 
+    print(typeKey)
 
-    template = "valdata/vsldash.html"
-    return render(request, template, data)
+    if tweight['total_weights'] is not None:
+        data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
+        data['bookings'] = bookings
+        data['containers'] = containers
+        data['voyage'] = trip
+        data['typeKey'] = typeKey
+        data['typeValue'] = typeValue
+        data['color'] = Vessels.objects.get(voyage=trip, checkID=ver).vcolor
+        data['version'] = ver
+        data['tweight'] = "{:,}".format(int(tweight['total_weights'])) 
+        data['cweight'] = "{:,}".format(int(cweight['total_weights'])) 
 
+        template = "valdata/vsldash.html"
+        return render(request, template, data)
+    
+    else:
+        return redirect('urlmessage', msg='No data available for this ship.')
 
 
 # ====== END > Vessel Dashboard ===================================================

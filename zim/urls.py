@@ -2,7 +2,7 @@
 # -*- coding: latin-1 -*-
 
 from django.contrib import admin
-from valdata.views import PORTFL_ListFiles, PORTFL_Upload, graph, index, PORTFL_Del, message, PORTDT_ListData, vsldash, ListVessels
+from valdata.views import PORTFL_ListFiles, PORTFL_Upload, graph, index, PORTFL_Del, message, PORTDT_ListData, vsldash, ListVessels, ListContainers
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
@@ -23,6 +23,8 @@ urlpatterns = [
     path('msg/<str:msg>', message, name='urlmessage'),
     path('vsldash/<int:trip>/<int:ver>', vsldash, name='urlvsldash'),
     path('vsllist/', ListVessels, name='urlvsllist'),
+    path('contlist/<int:trip>/<int:ver>', ListContainers, name='urlcontlist'),
+    
 
 ]
 

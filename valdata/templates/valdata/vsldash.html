@@ -3,40 +3,96 @@
 {% block main %}
 <div id="vsldash" class="wrapper">
 
-    <h2>Vessel Name: {{ vessel }}</h2>
-    <h3>Voyage: {{ voyage }}</h3>
-    <h3>Version: {{ version }}</h3>
+    <div class="heading">
+        <h1><i class="fas fa-ship"></i>&emsp;{{ vessel }}</h1>
+        <div>Trip: {{ voyage }}&emsp;<div class="version">v.{{ version }}</div></div>
+    </div>
 
     <div class="numbers">
         <div class="bookings box" style="background-color: {{ color }};">
             <div class="icon">
-            {{ bookings.booking__count }}
+                {{ bookings.booking__count }}
             </div>
             <h4>Bookings</h4>
         </div>
-        <div class="containers box" style="background-color: {{ color }};">
+        <a class="box" style="background-color: {{ color }};" href="{% url 'urlcontlist' trip=voyage ver=version %}">
+        <div class="containers">
             <div class="icon">
-            {{ containers.serial__count }}
-            </div>        
+                {{ containers.serial__count }}
+            </div>
             <h4>Containers</h4>
         </div>
+        </a>
+
+        {% if tweight %}
         <div class="tweigth box" style="background-color: {{ color }};">
             <div class="icon">
-            {{ tweight }} Kg
+                {{ tweight }} Kg
             </div>
             <h4>Total Weigth</h4>
         </div>
         <div class="cweigth box" style="background-color: {{ color }};">
             <div class="icon">
-            {{ cweight }} Kg
-            </div>        
+                {{ cweight }} Kg
+            </div>
             <h4>Load Weigth</h4>
         </div>
+        {% endif %}
     </div>
     <div class="graphs">
-        <div class="containertypes"></div>
+
+        <div class="containertypes">
+            {% if typeValue %}
+            <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function(){
+                let data = {
+                      labels: {{ typeKey|safe }},
+                      datasets: [{
+                            label: "Container Types",
+                            //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                            backgroundColor: ["#5f00a3","#990aff","#c370ff","#e5c2ff"],
+                            data: {{ typeValue }}
+                        }],
+                      borderColor: 'rgb(255, 255, 255)'
+                };
+
+                let opt =  {
+                    title: {
+                        display: true,
+                        position: "left",
+                        text: "Container Types",
+                        fontSize: 18,
+                        fontColor: "#111"
+                    },
+                    legend: {
+                            display: true,
+                            position: "right",
+                            labels: {
+                                fontColor: "#333",
+                                fontSize: 16
+                            }
+                    },
+
+                }
+                // #3b0066  // dark indigo
+                // #5f00a3 
+                // #990aff
+                // #c370ff
+                // #e5c2ff
+                var context = document.getElementById('piechart');
+                var chart = new Chart(context, {
+                    type: 'pie',
+                    data: data,
+                    options: opt
+                });
+            });
+            </script>
+            <canvas id="piechart" width="500" height="300"></canvas>
+            {% endif %}
+        </div>
+
         <div class="pod"></div>
     </div>
-    
+
 </div>
 {% endblock %}

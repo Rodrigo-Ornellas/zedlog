@@ -124,7 +124,7 @@ class PortData(models.Model):
     oog        = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return ('%s - %s - %s - %s - %s' % (self.serial, self.tipo, self.pod, self.booking))
+        return ('%s - %s - %s - %s' % (self.serial, self.tipo, self.pod, self.booking))
 
     # '%d-%m-%Y %H:%M:%S'
     # 11-16-2018 10:58:53 PM

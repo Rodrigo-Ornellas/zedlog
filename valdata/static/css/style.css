@@ -264,6 +264,51 @@ table td {
       font-weight: 800;
 }
 
+#vsldash #piechart {
+      background-color: whitesmoke;
+      padding: 1.5rem 1rem;
+}
+
+#vsldash .containertypes {
+      margin-top: 3rem;
+      margin-left: 1rem;
+      width: 450px;
+}
+
+#vsldash .heading {
+      padding-left: 1rem;
+      display: flex;
+      position: relative;
+}
+
+#vsldash .heading div {
+      text-align: center;
+      display: flex;
+      align-items: center;
+}
+
+#vsldash .heading h1 {
+      margin-right: 1.5rem;
+}
+
+/* #vsldash .voy {
+      border-radius: 50%;
+      border: 1px solid indigo;
+      background-color: indigo;
+      padding: 5px;
+      color: white;
+      margin-left: 0.5rem;
+} */
+
+#vsldash .version {
+      background-color: firebrick;
+      color: ghostwhite;
+      padding: 0.1rem 0.3rem;
+      border-radius: 5px;
+      text-align: center;
+      /* margin-top: 1rem; */
+}
+
 /* ========================= Vessel List ========================= */
 
 .vessel {
@@ -313,7 +358,7 @@ table td {
       margin-bottom: 1rem;
 }
 
-.vessel .right .top div {
+.vessel .right .top .voy {
       border-radius: 50%;
       border: 1px solid indigo;
       background-color: indigo;
@@ -416,7 +461,7 @@ table td {
             grid-gap: 1rem;
       }
 
-      #vsllist h2 {
+      #vsllist h1 {
             grid-column: 1/3;
       }
 }

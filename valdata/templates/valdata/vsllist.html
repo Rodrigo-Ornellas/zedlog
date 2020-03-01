@@ -3,7 +3,7 @@
 {% block main %}
 <div id="vsllist" class="wrapper">
 
-    <h2>Vessels</h2>
+    <h1>Vessels</h1>
 
     {% if vsl %}
     {% for v in vsl %}
@@ -21,7 +21,7 @@
             <div class=" right">
                 <div class="top">
                     <h3>{{ v.vcode }}</h3>
-                    <div>{{ v.voyage }}</div>
+                    <div class="voy">{{ v.voyage }}</div>
                 </div>
                 <div class="checked">
                     <div>{{ v.checkedDate }}</div>
