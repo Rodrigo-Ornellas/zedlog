@@ -36,7 +36,7 @@ class Vessels(models.Model):
     vcolor = models.CharField(max_length=255)
 
     def __str__(self):
-        return ('%s %s %s' % (self.pk, self.vcode, self.voyage))
+        return ('%s - %s - %s' % (self.pk, self.vcode, self.voyage))
 
 
 class PortName(models.Model):
@@ -72,7 +72,7 @@ class Containers(models.Model):
     # registerDate  = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return ('%s - %s' % (self.containerID, self.isActive))
+        return ('%s' % (self.containerID))
 
 
 # class Trips(models.Model):
@@ -106,7 +106,7 @@ class Containers(models.Model):
 class PortData(models.Model):
     filefk     = models.ForeignKey(PortFILE, on_delete=models.CASCADE, null=True)
     vessel     = models.ForeignKey(Vessels, on_delete=models.CASCADE, null=True)    
-    serial     = models.CharField(max_length=15, null=True, blank=True)
+    serial     = models.ForeignKey(Containers, on_delete=models.CASCADE, null=True)
     tipo       = models.CharField(max_length=10, null=True, blank=True)
     location   = models.CharField(max_length=10, null=True, blank=True)
     full       = models.CharField(max_length=10, null=True, blank=True)

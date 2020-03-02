@@ -5,7 +5,8 @@
 
     <div class="heading">
         <h1><i class="fas fa-ship"></i>&emsp;{{ vessel }}</h1>
-        <div>Trip: {{ voyage }}&emsp;<div class="version">v.{{ version }}</div></div>
+        <div>Trip: {{ voyage }}&emsp;<div class="version">v.{{ version }}</div>
+        </div>
     </div>
 
     <div class="numbers">
@@ -16,24 +17,24 @@
             <h4>Bookings</h4>
         </div>
         <a class="box" style="background-color: {{ color }};" href="{% url 'urlcontlist' trip=voyage ver=version %}">
-        <div class="containers">
-            <div class="icon">
-                {{ containers.serial__count }}
+            <div class="containers">
+                <div class="icon">
+                    {{ containers.serial__count }}
+                </div>
+                <h4>Containers</h4>
             </div>
-            <h4>Containers</h4>
-        </div>
         </a>
 
         {% if tweight %}
         <div class="tweigth box" style="background-color: {{ color }};">
             <div class="icon">
-                {{ tweight }} Kg
+                {{ tweight }} t
             </div>
             <h4>Total Weigth</h4>
         </div>
         <div class="cweigth box" style="background-color: {{ color }};">
             <div class="icon">
-                {{ cweight }} Kg
+                {{ cweight }} t
             </div>
             <h4>Load Weigth</h4>
         </div>
@@ -41,58 +42,95 @@
     </div>
     <div class="graphs">
 
-        <div class="containertypes">
-            {% if typeValue %}
-            <script type="text/javascript">
-            document.addEventListener("DOMContentLoaded", function(){
-                let data = {
-                      labels: {{ typeKey|safe }},
-                      datasets: [{
+            <div class="containertypes ">
+                {% if typeValue %}
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function () {
+                        let data = {
+                            labels: {{ typeKey|safe }},
+                        datasets: [ {
                             label: "Container Types",
                             //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                            backgroundColor: ["#5f00a3","#990aff","#c370ff","#e5c2ff"],
+                            backgroundColor: [ "#5f00a3", "#990aff", "#c370ff", "#e5c2ff" ],
                             data: {{ typeValue }}
-                        }],
-                      borderColor: 'rgb(255, 255, 255)'
-                };
+                            } ],
+                        borderColor: 'rgb(255, 255, 255)'
+                    };
 
-                let opt =  {
-                    title: {
-                        display: true,
-                        position: "left",
-                        text: "Container Types",
-                        fontSize: 18,
-                        fontColor: "#111"
-                    },
-                    legend: {
+                    let opt = {
+                        title: {
+                            display: true,
+                            position: "top",
+                            text: "Container Types",
+                            fontSize: 18,
+                            fontColor: "#111"
+                        },
+                        legend: {
                             display: true,
                             position: "right",
                             labels: {
                                 fontColor: "#333",
                                 fontSize: 16
                             }
-                    },
+                        },
 
-                }
-                // #3b0066  // dark indigo
-                // #5f00a3 
-                // #990aff
-                // #c370ff
-                // #e5c2ff
-                var context = document.getElementById('piechart');
-                var chart = new Chart(context, {
-                    type: 'pie',
-                    data: data,
-                    options: opt
+                    }
+                    // #3b0066  // dark indigo
+                    // #5f00a3 
+                    // #990aff
+                    // #c370ff
+                    // #e5c2ff
+                    var context = document.getElementById('piechart');
+                    var chart = new Chart(context, {
+                        type: 'pie',
+                        data: data,
+                        options: opt
+                    });
                 });
-            });
-            </script>
-            <canvas id="piechart" width="500" height="300"></canvas>
-            {% endif %}
-        </div>
+                </script>
+                {% comment %} <canvas id="piechart" width="500" height="300"></canvas> {% endcomment %}
+                <canvas id="piechart"></canvas>
+                {% endif %}
+            </div>
 
-        <div class="pod"></div>
+
+            <div class="pod">
+                    <script type="text/javascript">
+                        document.addEventListener("DOMContentLoaded", function () {
+                            let info = {
+                                labels: {{ podKey|safe }},
+                                datasets: [ {
+                                    label: "Port of Destination",
+                                    backgroundColor: [ "#3b0066", "#5f00a3", "#990aff", "#c370ff", "#e5c2ff" ],
+                                    data: {{ podValue }}
+                                                } ],
+                                borderColor: 'rgb(255, 255, 255)'
+                            };
+
+                            let opt2 = {
+                                title: {
+                                    display: true,
+                                    position: "top",
+                                    text: "Port of Destination",
+                                    fontSize: 18,
+                                    fontColor: "#111"
+                                },
+                                legend: {
+                                    display: false
+                                }
+                            }
+
+                            var ctx = document.getElementById('barchart');
+                            var chart = new Chart(ctx, {
+                                type: 'bar',
+                                data: info,
+                                options: opt2
+                            });
+                        });
+                    </script>
+                    <canvas id="barchart"></canvas>
+            </div>
+    
+
     </div>
-
-</div>
-{% endblock %}
+    {% endblock %}

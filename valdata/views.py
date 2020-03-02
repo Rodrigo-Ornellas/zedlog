@@ -208,7 +208,7 @@ def ListVessels(request):
     # =============================================    
     data = {}
     data['user'] = request.user
-    data['vsl'] = Vessels.objects.all()
+    data['vsl'] = Vessels.objects.all().order_by('-checkedDate')
     return render(request, 'valdata/vsllist.html', data)
 
 
@@ -306,19 +306,19 @@ def PORTDT_SaveData(passedFile):
         if vesselID == '':
             vesselID = CheckVessel(column[11])
             # vesselName = column[11]
-            print('1) vessel ID > {}'.format(vesselID.pk))
+            # print('1) vessel ID > {}'.format(vesselID.pk))
 
         # Check and Update List of Ports in the DataBase
         portObj, portNAME = CheckPort(column[7])
-        print('2) port name > {}'.format(portNAME))
-        print('2) port ID > {}'.format(portObj.pk))
+        # print('2) port name > {}'.format(portNAME))
+        # print('2) port ID > {}'.format(portObj.pk))
 
         # Check and Update List of Containers in the DataBase
         contObject = CheckContainer(column[0], column[1], portObj)
-        print('3) container > {}'.format(contObject.containerID))
+        # print('3) container > {}'.format(contObject.containerID))
 
         # CONVERTING the existing DATE format into the
-        cDate = datetime.now()
+        cDate = '- - -'
         if column[15] != '':
             cDate = convertDate(column[15])
             print(cDate)
@@ -327,7 +327,7 @@ def PORTDT_SaveData(passedFile):
             # ** numero de identificacao do container
             filefk=passedFile,
             vessel=vesselID,          # nome do navio
-            serial=contObject.pk,
+            serial=contObject,
             tipo=column[1],           # ** tipo e tamanho do container
             location=column[4],       # trem / truck ou yard
             full=column[6],           # freight kind = full ou empty
@@ -395,7 +395,7 @@ def ListContainers(request, trip, ver):
     data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
     data['trip'] = trip
     data['ver'] = ver
-    data['container'] = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver)
+    data['container'] = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).order_by('booking')
     return render(request, 'valdata/contlist.html', data)
 
 
@@ -430,29 +430,40 @@ def vsldash(request, trip, ver):
     # Adding the total weight of the Containers and Cargo
     vdata = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver)
 
-    # Summary of Container Type
+    # Summary of Container Type Data for the PIE Graph
     ctype = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('tipo').annotate(c=Count('tipo')).order_by('-c')
     typeKey = []
     typeValue = []
-    print(ctype)
+    typeTotal = 0
+    # print("====================")
     for k in ctype:
-        print("key > {}".format(k['tipo']))
-        # zz = k['tipo'].encode('ascii', errors='ignore').decode('utf8')
-        # zz = k['tipo'].encode('ascii', errors='ignore').decode('utf-8')
-        # typeKey.append("{}".format(zz))
+        # print("key > {}".format(k['tipo']))
         typeKey.append(k["tipo"])
+        # print("Val > {}".format(k["c"]))
+        typeValue.append(k["c"])
+        typeTotal += k["c"]
 
-    for v in ctype:
-        print("Val > {}".format(v['c']))
-        typeValue.append(v['c'])
 
-    # =============================================
-    print(bookings)
-    print(containers)
-    print(cweight)
-    print(tweight)
-    print(typeKey)
+    #  POD or Port of Destination Data for BAR Graph
+    gpod = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('pod__pcode').annotate(c=Count('pod')).order_by('-c')
+    podKey = []
+    podValue = []
+    podTotal = 0
+    # print("====================")
+    for k in gpod:
+        # print("key > {}".format(k['pod__pcode']))
+        podKey.append(k["pod__pcode"])
+        # print("Val > {}".format(k["c"]))
+        podValue.append(k["c"])
+        podTotal += k["c"]
 
+
+    # print("typeTotal > {}".format(typeTotal))
+    # print("podTotal > {}".format(podTotal))
+    # print(podKey)
+    # print(podValue)
+
+    # If there AREN ships
     if tweight['total_weights'] is not None:
         data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
         data['bookings'] = bookings
@@ -460,14 +471,17 @@ def vsldash(request, trip, ver):
         data['voyage'] = trip
         data['typeKey'] = typeKey
         data['typeValue'] = typeValue
+        data['podKey'] = podKey
+        data['podValue'] = podValue        
         data['color'] = Vessels.objects.get(voyage=trip, checkID=ver).vcolor
         data['version'] = ver
-        data['tweight'] = "{:,}".format(int(tweight['total_weights'])) 
-        data['cweight'] = "{:,}".format(int(cweight['total_weights'])) 
+        data['tweight'] = "{:,}".format(int(tweight['total_weights']/1000)) 
+        data['cweight'] = "{:,}".format(int(cweight['total_weights']/1000)) 
 
         template = "valdata/vsldash.html"
         return render(request, template, data)
     
+    # If there AREN'T any SHIPS
     else:
         return redirect('urlmessage', msg='No data available for this ship.')
 

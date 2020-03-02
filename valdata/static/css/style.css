@@ -15,6 +15,11 @@ header {
       z-index: 999;
       width: 100%;
       background: linear-gradient(to left, indigo, white);
+      height: 70px;
+
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
 }
 
 main {
@@ -27,11 +32,12 @@ main {
 footer {
       background-color: whitesmoke;
       padding: 0.5rem 1rem;
+      box-sizing: border-box;
 
       display: flex;
       align-items: center;
 
-      height: 40px;
+      height: 60px;
       width: 100%;
 }
 
@@ -54,7 +60,8 @@ a {
       text-decoration: none;
 }
 
-/* ================== BUTTON ================== */
+/* ================== BUTTON ============================================== */
+/* ======================================================================== */
 
 .deletebtn {
       padding: 0.35rem 1rem;
@@ -93,6 +100,7 @@ button {
 }
 
 /* ========================= NAVIGATION ========================= */
+/* ======================================================================== */
 
 #logo {
       width: auto;
@@ -185,6 +193,8 @@ nav ul li a {
 }
 
 /* ===================  TABLE  ========================= */
+/* ======================================================================== */
+
 .table {
       margin-bottom: 2rem;
       /* border: 1px solid black; */
@@ -232,13 +242,20 @@ table td {
       grid-gap: 1rem;
 }
 
-/* ===================  GRAPH  ========================= */
+/* ===================  GRAPH  ============================================ */
+/* ======================================================================== */
 
 #map-container {
       grid-column: 1 / 3;
 }
 
-/* ========================= Vessel Dash ========================= */
+/* ========================= Vessel Dash ================================== */
+/* ======================================================================== */
+
+#vsldash .heading {
+      margin-bottom: 3rem;
+      border-bottom: 1px solid black;
+}
 
 #vsldash .numbers {
       display: flex;
@@ -264,15 +281,28 @@ table td {
       font-weight: 800;
 }
 
-#vsldash #piechart {
-      background-color: whitesmoke;
-      padding: 1.5rem 1rem;
+#vsldash .graphs {
+      display: flex;
+      flex-flow: column nowrap;
 }
 
-#vsldash .containertypes {
+#vsldash #barchart,
+#vsldash #piechart {
+      background-color: whitesmoke;
+      padding: 1.5rem;
+      border-radius: 5px;
+      margin-bottom: 2rem;
+      box-sizing: border-box;
+}
+
+/* #vsldash .containertypes {
       margin-top: 3rem;
       margin-left: 1rem;
-      width: 450px;
+} */
+
+#vsldash .pod,
+#vsldash .containertypes {
+      width: 100%;
 }
 
 #vsldash .heading {
@@ -448,11 +478,11 @@ table td {
       }
 
       #vsldash .numbers {
-            flex-flow: row nowrap;
+            flex-flow: row wrap;
       }
 
       #vsldash .box {
-            flex: 1 0 22%;
+            flex: 1 0 15%;
             margin: 0 1rem;
       }
 
@@ -463,5 +493,21 @@ table td {
 
       #vsllist h1 {
             grid-column: 1/3;
+      }
+
+      #vsldash .graphs {
+            flex-flow: row nowrap;
+            margin-top: 2rem;
+            justify-content: end;
+      }
+
+      #vsldash .pod,
+      #vsldash .containertypes {
+            margin: 0 1rem;
+      }
+
+      #vsldash #piechart,
+      #vsldash #barchart {
+            padding: 1rem;
       }
 }
