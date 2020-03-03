@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=-)ko^vj*9hy3b7k3-6krlb7jn*t75^o=h$x&*_p4uq($bg5!c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False #True
 
 # Original ALLOWED_HOSTS - commented out and replaced by new command on the bottom of the page
 ALLOWED_HOSTS = []
@@ -156,17 +156,27 @@ if (DEBUG == True):
 # AUTH_USER_MODEL = 'users.CustomUser'
 
 
+# ==================================================================================================
 # HEROKU DEPLOY CONFIGURATION
-# ============================================================
+# ==================================================================================================
+
 # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
 
 if (DEBUG == False):
 
     # Static files (CSS, JavaScript, Images)
+    # If you have files currently in your STATIC_ROOT that you wish to serve then you need 
+    # to move these to a different directory and put that other directory in STATICFILES_DIRS. 
+    # Your STATIC_ROOT directory should be empty and all static files should be collected 
+    # into that directory (i.e., it should not already contain static files)
+
     # https://docs.djangoproject.com/en/1.11/howto/static-files/
     PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
     # STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-    STATIC_ROOT = os.path.join(BASE_DIR, 'valdata/static/')
+    # STATIC_ROOT is the path of the folder where the compiled files will be served from
+    # command = python manage.py collectstatic
+    # this command will compile all the STATIC files into this folder.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'www/')
 
     # Extra lookup directories for collectstatic to find static files
     STATICFILES_DIRS = (
@@ -174,8 +184,8 @@ if (DEBUG == False):
     )
 
     #  Add configuration for static files storage using whitenoise
-    # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+    # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
     # Update Database Configuration in settings.py
