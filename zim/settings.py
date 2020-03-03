@@ -159,7 +159,7 @@ if (DEBUG == True):
 # ==================================================================================================
 # HEROKU DEPLOY CONFIGURATION
 # ==================================================================================================
-
+# instructions for the deploy
 # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
 
 if (DEBUG == False):
@@ -184,8 +184,10 @@ if (DEBUG == False):
     )
 
     #  Add configuration for static files storage using whitenoise
-    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-    # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+    # the above value is not compatible with WhiteNoise 4.0 - use the below code
+    # https://stackoverflow.com/questions/55813584/django-whitenoise-configuration-is-incompatible-with-whitenoise-v4-0
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
     # Update Database Configuration in settings.py
