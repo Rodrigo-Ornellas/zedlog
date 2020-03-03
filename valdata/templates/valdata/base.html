@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ZEDLOG Port System</title>
-    {% load static %}
+    <title>ZEDLOG System</title>
+    {% load static %}    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" integrity="sha384-v8BU367qNbs/aIZIxuivaU55N5GPF89WBerHoGA4QTcbUjYiLQtKdrfXnqAcXyTv" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/style.css'%}">
-    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.min.css' %}" />
-    <script type="text/javascript" src="{% static 'fusioncharts/fusioncharts.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
@@ -26,13 +25,13 @@
                     {% comment %} <li><a href="{% url 'urllogout' %}">Logout</a></li> {% endcomment %}
                     {% if user.is_authenticated %}
                     {% comment %} <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li> {% endcomment %}
-                    <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
-                    <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
-                    <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
+                    <li><a href="{% url 'urlcsvupload' %}">Upload Data</a></li>
+                    <li><a href="{% url 'urlcsvdata' %}">View Data</a></li>
+                    <li><a href="{% url 'urlportfiles' %}">Manage Files</a></li>
                     {% comment %} <li><a href="{% url 'urlgraph' %}">Dashboard</a></li> {% endcomment %}
-                    <li><a href="{% url 'urlvsllist' %}">Trips</a></li>
+                    <li><a href="{% url 'urlvsllist' %}">View Trips</a></li>
                     {% comment %} <li><a href="{% url 'urlvsldash' trip=21 %}">Vessel</a></li> {% endcomment %}
-                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                    {% comment %} <li><a href="{% url 'admin:index' %}">Admin</a></li> {% endcomment %}
                     <li class="userMenu"><a href="{% url 'logout' %}">Logout</a></li>
                     {% comment %} <span>{{ user }}</span> {% endcomment %}
                     {% else %}

@@ -24,11 +24,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=-)ko^vj*9hy3b7k3-6krlb7jn*t75^o=h$x&*_p4uq($bg5!c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+DEBUG = True
 
 # Original ALLOWED_HOSTS - commented out and replaced by new command on the bottom of the page
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -45,7 +44,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -133,6 +131,10 @@ DATETIME_INPUT_FORMATS = [
     '%d-%m-%Y %H:%M:%S',
 ]
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.0/howto/static-files/
+STATIC_URL = '/static/'
+
 
 # https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
 # https://wsvincent.com/django-user-authentication-tutorial-login-and-logout/
@@ -153,11 +155,12 @@ if (DEBUG == True):
 # https://wsvincent.com/django-referencing-the-user-model/
 # AUTH_USER_MODEL = 'users.CustomUser'
 
-STATIC_URL = '/static/'
-if True:
-    # HEROKU DEPLOY CONFIGURATION
-    # ============================================================
-    # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
+
+# HEROKU DEPLOY CONFIGURATION
+# ============================================================
+# https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
+
+if (DEBUG == False):
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -173,6 +176,7 @@ if True:
     #  Add configuration for static files storage using whitenoise
     # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
     # Update Database Configuration in settings.py
     import dj_database_url

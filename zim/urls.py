@@ -1,8 +1,5 @@
-#!/usr/bin/python
-# -*- coding: latin-1 -*-
-
 from django.contrib import admin
-from valdata.views import PORTFL_ListFiles, PORTFL_Upload, graph, index, PORTFL_Del, message, PORTDT_ListData, vsldash, ListVessels, ListContainers
+from valdata.views import PORTFL_ListFiles, PORTFL_Upload, index, PORTFL_Del, message, PORTDT_ListData, vsldash, ListVessels, ListContainers #graph, 
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
@@ -17,7 +14,7 @@ urlpatterns = [
     path('portfiles/', PORTFL_ListFiles, name='urlportfiles'),
     path('csvupload/', PORTFL_Upload, name='urlcsvupload'),
     path('csvdata/', PORTDT_ListData, name='urlcsvdata'),
-    path('graph/', graph, name='urlgraph'),
+    # path('graph/', graph, name='urlgraph'),
     path('portfiles/delete/<int:id>', PORTFL_Del, name='urldeletefile'),
     path('schedule/update', downloadSched, name='urlscheduleget'),
     path('msg/<str:msg>', message, name='urlmessage'),

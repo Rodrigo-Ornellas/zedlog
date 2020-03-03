@@ -31,7 +31,7 @@ main {
 
 footer {
       background-color: whitesmoke;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 2rem;
       box-sizing: border-box;
 
       display: flex;
@@ -105,7 +105,7 @@ button {
 #logo {
       width: auto;
       height: 50px;
-      margin-left: 1rem;
+      margin-left: 2rem;
 }
 
 nav {
@@ -166,6 +166,7 @@ nav ul {
       padding: 0;
       list-style: none;
       margin: 0;
+      margin-right: 2rem;
 }
 
 nav ul li {
@@ -223,6 +224,7 @@ table th {
 table td {
       background-color: whitesmoke;
       text-align: center;
+      word-break: break-all;
 }
 
 .tool {
@@ -262,13 +264,19 @@ table td {
 }
 
 #index {
-      display: grid;
+      /* display: grid;
       grid-template-columns: repeat(2 1fr);
-      grid-gap: 1rem 3rem;
+      grid-gap: 1rem 3rem; */
+      display: flex;
+      flex-flow: column nowrap;
 }
 
 #index h1 {
       grid-column: 1/3;
+}
+
+#index .tool {
+      margin-bottom: 2rem;
 }
 
 #index .toolList {
@@ -505,6 +513,10 @@ table td {
             grid-template-columns: 1fr 5fr;
       }
 
+      /* header nav {
+            margin-right: 2rem;
+      } */
+
       #vsldash {
             padding: 1rem 0;
       }
@@ -541,5 +553,11 @@ table td {
       #vsldash #piechart,
       #vsldash #barchart {
             padding: 1rem;
+      }
+
+      #index {
+            display: grid;
+            grid-template-columns: repeat(2 1fr);
+            grid-gap: 1rem 3rem;
       }
 }
