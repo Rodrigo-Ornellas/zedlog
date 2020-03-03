@@ -249,6 +249,38 @@ table td {
       grid-column: 1 / 3;
 }
 
+/* ===================  HomePage  ============================================ */
+/* ======================================================================== */
+
+#index h2 {
+      margin-top: 0;
+      color: indigo;
+}
+#index span {
+      color: indigo;
+      font-style: italic;
+}
+
+#index {
+      display: grid;
+      grid-template-columns: repeat(2 1fr);
+      grid-gap: 1rem 3rem;
+}
+
+#index h1 {
+      grid-column: 1/3;
+}
+
+#index .toolList {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: space-between;
+}
+#index .botao {
+      text-align: center;
+      width: 60px;
+}
+
 /* ========================= Vessel Dash ================================== */
 /* ======================================================================== */
 

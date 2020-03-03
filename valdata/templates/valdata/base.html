@@ -25,7 +25,7 @@
                 <ul>
                     {% comment %} <li><a href="{% url 'urllogout' %}">Logout</a></li> {% endcomment %}
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li>
+                    {% comment %} <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li> {% endcomment %}
                     <li><a href="{% url 'urlcsvupload' %}">Upload Port</a></li>
                     <li><a href="{% url 'urlcsvdata' %}">View CSV</a></li>
                     <li><a href="{% url 'urlportfiles' %}">Port Files</a></li>
