@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-# import dj_database_url
+
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=-)ko^vj*9hy3b7k3-6krlb7jn*t75^o=h$x&*_p4uq($bg5!c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 # Original ALLOWED_HOSTS - commented out and replaced by new command on the bottom of the page
 # ALLOWED_HOSTS = []
@@ -40,12 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'valdata',
-    'schedule',
-    # 'django_static_fontawesome',
+    'schedule'
 ]
 
 MIDDLEWARE = [
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -154,7 +153,7 @@ if (DEBUG == True):
 # AUTH_USER_MODEL = 'users.CustomUser'
 
 STATIC_URL = '/static/'
-if False:
+if True:
     # HEROKU DEPLOY CONFIGURATION
     # ============================================================
     # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
@@ -175,7 +174,8 @@ if False:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
     # Update Database Configuration in settings.py
+    import dj_database_url
     prod_db = dj_database_url.config(conn_max_age=500)
     DATABASES['default'].update(prod_db)
 
-    ALLOWED_HOSTS = ['dj-zedlog.herokuapp.com']
+    ALLOWED_HOSTS = ['https://zedlog.herokuapp.com/']
