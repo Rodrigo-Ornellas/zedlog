@@ -173,6 +173,9 @@ if (DEBUG == True):
 
 if (DEBUG == False):
 
+    # Current Virtual Env App configuration
+    # pip freeze > requirements.txt
+
     # Heroku Commands
     #   0) Push the code to Heroku Deployment
     #   git push heroku master
@@ -195,6 +198,11 @@ if (DEBUG == False):
     
     #   5) Heroku Live Database
     #   heroku addons:create heroku-postgresql:hobby-dev
+
+    # Configure Django App for Heroku.
+    # https://github.com/heroku/django-heroku
+    import django_heroku
+    django_heroku.settings(locals())
 
 
     # Static files (CSS, JavaScript, Images)
@@ -223,6 +231,7 @@ if (DEBUG == False):
     # http://whitenoise.evans.io/en/stable/changelog.html#v4-0
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     # MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+    # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'  # from Coding for Entrepreneurs Tutorial
 
     # Update Database Configuration in settings.py
     import dj_database_url
