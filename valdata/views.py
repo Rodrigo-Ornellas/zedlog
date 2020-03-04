@@ -403,6 +403,16 @@ def ListContainers(request, trip, ver):
 # ===================================================================
 
 @login_required(login_url='login')
+def vslSaleDate(request, trip, ver, sdate):
+    # =============================================
+    # this VIEW updates the SAIL date of the vessel
+    # 
+    # =============================================
+    sailDate = Vessels.objects.filter(voyage=trip).filter(checkID=ver
+    ).update(saleDate=sdate)
+
+
+@login_required(login_url='login')
 def vsldash(request, trip, ver):
     # =============================================
     # this VIEW shows a DASHBOARD of the 

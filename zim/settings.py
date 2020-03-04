@@ -24,13 +24,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=-)ko^vj*9hy3b7k3-6krlb7jn*t75^o=h$x&*_p4uq($bg5!c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False #True
+DEBUG = True
 
 # Original ALLOWED_HOSTS - commented out and replaced by new command on the bottom of the page
 ALLOWED_HOSTS = []
 
 
 # Application definition
+
+# Use Whitenoise to serve STATIC files in the DEV environment
+# http://whitenoise.evans.io/en/stable/django.html#runserver-nostatic
+# https://docs.djangoproject.com/en/3.0/ref/contrib/staticfiles/#cmdoption-runserver-nostatic
+# INSTALLED_APPS = [ 'whitenoise.runserver_nostatic',
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,8 +48,11 @@ INSTALLED_APPS = [
     'schedule'
 ]
 
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,7 +129,7 @@ USE_TZ = True
 # Media Files
 # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-MEDIA_ROOT
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'www', 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'www', 'media/')
 
 MEDIA_URL = '/media/'
 
@@ -172,6 +180,9 @@ if (DEBUG == False):
     #   1) Test Heroku Locally - starts a local server
     #   heroku local web
 
+    #   1a) Open Live Site
+    #   heroku open
+
     #   2) Provides info about remote heroku database
     #   heroku pg:info
 
@@ -185,6 +196,7 @@ if (DEBUG == False):
     #   5) Heroku Live Database
     #   heroku addons:create heroku-postgresql:hobby-dev
 
+
     # Static files (CSS, JavaScript, Images)
     # If you have files currently in your STATIC_ROOT that you wish to serve then you need 
     # to move these to a different directory and put that other directory in STATICFILES_DIRS. 
@@ -197,11 +209,11 @@ if (DEBUG == False):
     # STATIC_ROOT is the path of the folder where the compiled files will be served from
     # command = python manage.py collectstatic
     # this command will compile all the STATIC files into this folder.
-    STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static/')
 
     # Extra lookup directories for collectstatic to find static files
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, 'valdata/static/'),
+        os.path.join(BASE_DIR, 'valdata', 'static'),
     )
 
     #  Add configuration for static files storage using whitenoise
@@ -210,7 +222,7 @@ if (DEBUG == False):
     # https://stackoverflow.com/questions/55813584/django-whitenoise-configuration-is-incompatible-with-whitenoise-v4-0
     # http://whitenoise.evans.io/en/stable/changelog.html#v4-0
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+    # MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
     # Update Database Configuration in settings.py
     import dj_database_url
