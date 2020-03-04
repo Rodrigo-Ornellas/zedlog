@@ -225,13 +225,13 @@ if (DEBUG == False):
     )
 
     #  Add configuration for static files storage using whitenoise
+    # from Coding for Entrepreneurs Tutorial
     # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
     # the above value is not compatible with WhiteNoise 4.0 - use the below code
     # https://stackoverflow.com/questions/55813584/django-whitenoise-configuration-is-incompatible-with-whitenoise-v4-0
     # http://whitenoise.evans.io/en/stable/changelog.html#v4-0
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    # MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
-    # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'  # from Coding for Entrepreneurs Tutorial
+    
 
     # Update Database Configuration in settings.py
     import dj_database_url
