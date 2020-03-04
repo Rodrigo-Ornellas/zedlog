@@ -161,8 +161,13 @@ if (DEBUG == True):
 # ==================================================================================================
 # instructions for the deploy
 # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
+# https://simpleisbetterthancomplex.com/tutorial/2016/08/09/how-to-deploy-django-applications-on-heroku.html
 
 if (DEBUG == False):
+
+    # Heroku Commands
+    #  git push heroku master
+    #  heroku logs --tail
 
     # Static files (CSS, JavaScript, Images)
     # If you have files currently in your STATIC_ROOT that you wish to serve then you need 
@@ -187,6 +192,7 @@ if (DEBUG == False):
     # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
     # the above value is not compatible with WhiteNoise 4.0 - use the below code
     # https://stackoverflow.com/questions/55813584/django-whitenoise-configuration-is-incompatible-with-whitenoise-v4-0
+    # http://whitenoise.evans.io/en/stable/changelog.html#v4-0
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
