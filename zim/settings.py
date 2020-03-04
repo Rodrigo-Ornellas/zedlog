@@ -214,14 +214,14 @@ if (DEBUG == False):
     # https://docs.djangoproject.com/en/1.11/howto/static-files/
     PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
     # STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-    # STATIC_ROOT is the path of the folder where the compiled files will be served from
-    # command = python manage.py collectstatic
-    # this command will compile all the STATIC files into this folder.
-    STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static/')
+    # STATIC_ROOT is the path of the folder where the compiled files will be served from after collectstatic
+    # command = python manage.py collectstatic # this command will compile all the STATIC files into this folder.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'www')
 
     # Extra lookup directories for collectstatic to find static files
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, 'valdata', 'static'),
+        os.path.join(BASE_DIR, 'static'),
+        # os.path.join(BASE_DIR, 'valdata', 'static'),
     )
 
     #  Add configuration for static files storage using whitenoise
