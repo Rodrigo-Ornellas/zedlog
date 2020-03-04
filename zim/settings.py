@@ -121,7 +121,7 @@ USE_TZ = True
 # Media Files
 # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-MEDIA_ROOT
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'www', 'media')
 
 MEDIA_URL = '/media/'
 
@@ -166,8 +166,24 @@ if (DEBUG == True):
 if (DEBUG == False):
 
     # Heroku Commands
-    #  git push heroku master
-    #  heroku logs --tail
+    #   0) Push the code to Heroku Deployment
+    #   git push heroku master
+    
+    #   1) Test Heroku Locally - starts a local server
+    #   heroku local web
+
+    #   2) Provides info about remote heroku database
+    #   heroku pg:info
+
+    #   3) Read End of Log files
+    #   heroku logs --tail
+    #   heroku logs -p postgres -t
+
+    #   4) Heroku Addons
+    #   heroku addons
+    
+    #   5) Heroku Live Database
+    #   heroku addons:create heroku-postgresql:hobby-dev
 
     # Static files (CSS, JavaScript, Images)
     # If you have files currently in your STATIC_ROOT that you wish to serve then you need 
@@ -181,7 +197,7 @@ if (DEBUG == False):
     # STATIC_ROOT is the path of the folder where the compiled files will be served from
     # command = python manage.py collectstatic
     # this command will compile all the STATIC files into this folder.
-    STATIC_ROOT = os.path.join(BASE_DIR, 'www/')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static')
 
     # Extra lookup directories for collectstatic to find static files
     STATICFILES_DIRS = (
