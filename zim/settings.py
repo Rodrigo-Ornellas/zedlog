@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -52,7 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -129,7 +128,7 @@ USE_TZ = True
 # Media Files
 # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-MEDIA_ROOT
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'www', 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'www' , 'media')
 
 MEDIA_URL = '/media/'
 
@@ -150,11 +149,14 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# https://docs.djangoproject.com/en/3.0/topics/email/
-if (DEBUG == True):
-    # this sends the emails to the CONSOLE
-    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# ==================================================================================================
+# this sends the emails to the CONSOLE
+# https://docs.djangoproject.com/en/3.0/topics/email/
+# ==================================================================================================
+if (DEBUG == True):
+    # this will send the email to the console
+    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # this will SAVE the emails to a FILE/FOLDER in the backend of the DJANGO project
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
@@ -163,13 +165,29 @@ if (DEBUG == True):
 # https://wsvincent.com/django-referencing-the-user-model/
 # AUTH_USER_MODEL = 'users.CustomUser'
 
-
 # ==================================================================================================
 # HEROKU DEPLOY CONFIGURATION
 # ==================================================================================================
 # instructions for the deploy
 # https://www.codementor.io/@jamesezechukwu/how-to-deploy-django-app-on-heroku-dtsee04d4
 # https://simpleisbetterthancomplex.com/tutorial/2016/08/09/how-to-deploy-django-applications-on-heroku.html
+
+
+# Static files (CSS, JavaScript, Images)
+# If you have files currently in your STATIC_ROOT that you wish to serve then you need 
+# to move these to a different directory and put that other directory in STATICFILES_DIRS. 
+# Your STATIC_ROOT directory should be empty and all static files should be collected 
+# into that directory (i.e., it should not already contain static files)
+
+# STATIC_ROOT is the path of the folder where the compiled files will be served from after collectstatic
+# command = python manage.py collectstatic # this command will compile all the STATIC files into this folder.
+STATIC_ROOT = os.path.join(BASE_DIR, 'www')
+
+# Extra lookup directories for collectstatic to find static files
+# when configured, COLLECTSTATIC complains of duplicate files
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'valdata', 'static'),
+# )
 
 if (DEBUG == False):
 
@@ -199,30 +217,14 @@ if (DEBUG == False):
     #   5) Heroku Live Database
     #   heroku addons:create heroku-postgresql:hobby-dev
 
+    #   6) Managing Heroku Configuration Variables
+    #   heroku config
+
     # Configure Django App for Heroku.
     # https://github.com/heroku/django-heroku
     import django_heroku
     django_heroku.settings(locals())
 
-
-    # Static files (CSS, JavaScript, Images)
-    # If you have files currently in your STATIC_ROOT that you wish to serve then you need 
-    # to move these to a different directory and put that other directory in STATICFILES_DIRS. 
-    # Your STATIC_ROOT directory should be empty and all static files should be collected 
-    # into that directory (i.e., it should not already contain static files)
-
-    # https://docs.djangoproject.com/en/1.11/howto/static-files/
-    PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
-    # STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-    # STATIC_ROOT is the path of the folder where the compiled files will be served from after collectstatic
-    # command = python manage.py collectstatic # this command will compile all the STATIC files into this folder.
-    STATIC_ROOT = os.path.join(BASE_DIR, 'www')
-
-    # Extra lookup directories for collectstatic to find static files
-    STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, 'static'),
-        # os.path.join(BASE_DIR, 'valdata', 'static'),
-    )
 
     #  Add configuration for static files storage using whitenoise
     # from Coding for Entrepreneurs Tutorial
