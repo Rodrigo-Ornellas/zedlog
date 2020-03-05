@@ -128,7 +128,7 @@ USE_TZ = True
 # Media Files
 # https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-MEDIA_ROOT
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'www' , 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
@@ -181,7 +181,7 @@ if (DEBUG == True):
 
 # STATIC_ROOT is the path of the folder where the compiled files will be served from after collectstatic
 # command = python manage.py collectstatic # this command will compile all the STATIC files into this folder.
-STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Extra lookup directories for collectstatic to find static files
 # when configured, COLLECTSTATIC complains of duplicate files
