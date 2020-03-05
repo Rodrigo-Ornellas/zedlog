@@ -19,11 +19,42 @@
     </div>
 
     <div class="tool toolList">
-        <div>
-            <h2><i class="fas fa-ship"></i>&emsp;List of Vessels</h2>
-            <p>Or start here, to vizualize the data of one Vessel.</p>
-        </div>
-        <a class="botao" href="{% url 'urlvsllist' %}">List</a>
+    {% if vsl %}
+            {% for v in vsl %}
+            <a href="{% url 'urlvsldash' trip=v.voyage ver=v.checkID %}">
+                <div class="vessel" style="color: {{ v.vcolor }}">
+
+                    <div class="left">
+                        {% comment %} <i class="fas fa-anchor"></i> {% endcomment %}
+                        {% comment %} <i class="fas fa-dolly"></i> {% endcomment %}
+                        {% comment %} <i class="fas fa-snowplow"></i> {% endcomment %}
+                        {% comment %} <i class="fab fa-canadian-maple-leaf"></i> {% endcomment %}
+                        {% comment %} <i class="fas fa-truck"></i> {% endcomment %}
+                        <i class="fas fa-ship"></i>
+                        {% if v.saleDate != None %}
+                        <div>{{ v.saleDate }}</div>
+                        {% else %}
+                        <div>Add Sale Date</div>
+                        {% endif %}
+                    </div>
+                    <div class=" right">
+                        <div class="top">
+                            <h3>{{ v.vcode }}</h3>
+                            <div class="voy">{{ v.voyage }}</div>
+                        </div>
+                        <div class="checked">
+                            <div>{{ v.checkedDate }}</div>
+                            <div class="version">v.{{ v.checkID }}</div>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+
+    {% else %}
+    <p>No trips registered in the database.</p>
+    {% endif %}
     </div>
 
 

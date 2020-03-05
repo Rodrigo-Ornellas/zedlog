@@ -280,10 +280,29 @@ table td {
 }
 
 #index .toolList {
-      display: flex;
+      /* display: flex;
       flex-flow: column nowrap;
-      justify-content: space-between;
+      justify-content: space-between; */
+
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 1rem;
+
+      padding: 0;
+      background-color: darkgray;
+      border: none;
 }
+
+#index .vessel {
+      padding: 1rem 0.5rem;
+      border: 1px solid black;
+      margin-bottom: 0;
+}
+
+#index .vessel:hover {
+      background-color: rgb(207, 197, 219);
+}
+
 #index .botao {
       text-align: center;
       width: 60px;

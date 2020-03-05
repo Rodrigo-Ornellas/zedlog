@@ -35,6 +35,7 @@ def index(request):
     # =============================================
     data = {}
     data['user'] = request.user
+    data['vsl'] = Vessels.objects.all().order_by('-checkedDate')[:3]
     return render(request, 'valdata/index.html', data)
 
 
@@ -403,7 +404,7 @@ def ListContainers(request, trip, ver):
 # ===================================================================
 
 @login_required(login_url='login')
-def vslSaleDate(request, trip, ver, sdate):
+def vslSailDate(request, trip, ver, sdate):
     # =============================================
     # this VIEW updates the SAIL date of the vessel
     # 
