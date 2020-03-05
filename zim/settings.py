@@ -21,8 +21,11 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
+
+with open('etc/chave.txt') as f:
+    SECRET_KEY = f.read().strip()
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=-)ko^vj*9hy3b7k3-6krlb7jn*t75^o=h$x&*_p4uq($bg5!c'
+# SECRET_KEY = '=-)ko^vj*9hy3b7k3-6krlb7jn*t75^o=h$x&*_p4uq($bg5!c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -225,9 +228,14 @@ if (DEBUG == False):
     #   7) Access Heroku Files via terminal
     #   heroku run bash -a zedlog
 
-    # Configure Django App for Heroku.
-    # https://github.com/heroku/django-heroku
-    django_heroku.settings(locals())
+    #   8) Info of the App
+    #   heroku info -a zedlog
+
+    #   9) Clone the code from Heroku
+    #   heroku git:clone -a zedlog
+
+    #   10) Heroku Login Info
+    #   heroku login -l
 
 
     #  Add configuration for static files storage using whitenoise
@@ -243,4 +251,17 @@ if (DEBUG == False):
     prod_db = dj_database_url.config(conn_max_age=500)
     DATABASES['default'].update(prod_db)
 
-    ALLOWED_HOSTS = ['https://zedlog.herokuapp.com/']
+    ALLOWED_HOSTS = [
+        'https://zedlog.herokuapp.com/',
+        'http://0.0.0.0:5000/',
+        'http://0.0.0.0',
+        '*',
+        "localhost", 
+        "127.0.0.1"
+    ]
+
+
+    # Configure Django App for Heroku.
+    # https://github.com/heroku/django-heroku
+    # https://pypi.org/project/django-heroku/
+    django_heroku.settings(locals())
