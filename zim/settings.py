@@ -10,8 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import django_heroku
-import dj_database_url
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -21,25 +19,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 with open('etc/chave.txt') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Original ALLOWED_HOSTS - commented out and replaced by new command on the bottom of the page
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
 
 
 # Application definition
-
-# Use Whitenoise to serve STATIC files in the DEV environment
-# http://whitenoise.evans.io/en/stable/django.html#runserver-nostatic
-# https://docs.djangoproject.com/en/3.0/ref/contrib/staticfiles/#cmdoption-runserver-nostatic
-# INSTALLED_APPS = [ 'whitenoise.runserver_nostatic',
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,7 +45,6 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -146,6 +136,12 @@ DATETIME_INPUT_FORMATS = [
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_URL = '/static/'
 
+# Extra lookup directories for collectstatic to find static files
+# when configured, COLLECTSTATIC complains of duplicate files
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'valdata', 'static'),
+)
+
 
 # https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
 # https://wsvincent.com/django-user-authentication-tutorial-login-and-logout/
@@ -186,81 +182,3 @@ if (DEBUG == True):
 # STATIC_ROOT is the path of the folder where the compiled files will be served from after collectstatic
 # command = python manage.py collectstatic # this command will compile all the STATIC files into this folder.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Extra lookup directories for collectstatic to find static files
-# when configured, COLLECTSTATIC complains of duplicate files
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'valdata', 'static'),
-# )
-
-if (DEBUG == False):
-
-    # Current Virtual Env App configuration
-    # pip freeze > requirements.txt
-
-    # Heroku Commands
-    #   0) Push the code to Heroku Deployment
-    #   git push heroku master
-    
-    #   1) Test Heroku Locally - starts a local server
-    #   heroku local web
-
-    #   1a) Open Live Site
-    #   heroku open
-
-    #   2) Provides info about remote heroku database
-    #   heroku pg:info
-
-    #   3) Read End of Log files
-    #   heroku logs --tail
-    #   heroku logs -p postgres -t
-
-    #   4) Heroku Addons
-    #   heroku addons
-    
-    #   5) Heroku Live Database
-    #   heroku addons:create heroku-postgresql:hobby-dev
-
-    #   6) Managing Heroku Configuration Variables
-    #   heroku config
-
-    #   7) Access Heroku Files via terminal
-    #   heroku run bash -a zedlog
-
-    #   8) Info of the App
-    #   heroku info -a zedlog
-
-    #   9) Clone the code from Heroku
-    #   heroku git:clone -a zedlog
-
-    #   10) Heroku Login Info
-    #   heroku login -l
-
-
-    #  Add configuration for static files storage using whitenoise
-    # from Coding for Entrepreneurs Tutorial
-    # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-    # the above value is not compatible with WhiteNoise 4.0 - use the below code
-    # https://stackoverflow.com/questions/55813584/django-whitenoise-configuration-is-incompatible-with-whitenoise-v4-0
-    # http://whitenoise.evans.io/en/stable/changelog.html#v4-0
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    
-
-    # Update Database Configuration in settings.py
-    prod_db = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'].update(prod_db)
-
-    ALLOWED_HOSTS = [
-        'https://zedlog.herokuapp.com/',
-        'http://0.0.0.0:5000/',
-        'http://0.0.0.0',
-        '*',
-        "localhost", 
-        "127.0.0.1"
-    ]
-
-
-    # Configure Django App for Heroku.
-    # https://github.com/heroku/django-heroku
-    # https://pypi.org/project/django-heroku/
-    django_heroku.settings(locals())

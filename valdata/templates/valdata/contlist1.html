@@ -4,17 +4,12 @@
 
 <div id="portdata" class="wrapper">
 
-    {% if header %}
-    <h1>{{ header }}</h1>
-    {% else %}
     <h1>Container List</h1>
-    {% endif %}
 
     {% if container %}
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Booking</th>
                 <th>Container</th>
                 <th>POD</th>
@@ -23,15 +18,13 @@
             </tr>
         </thead>
         <tbody>
-            {% comment %} {% set count = 0 %} {% endcomment %}
-            {% comment %} {{ counter = ( counter | default(0) ) + 1 }} {% endcomment %}
+
             {% for c in container %}
                 {% if c.arrival != '- - -' %}
                 <tr style="color: red;">
                 {% else %}
                 <tr>
                 {% endif %}
-                    <td>{{ c.pk }}</td>
                     <td>{{ c.booking }}</td>
                     <td>{{ c.serial }}</td>
                     <td>{{ c.pod }}</td>
@@ -41,9 +34,6 @@
             {% endfor %}
         </tbody>
     </table>
-    {% else %}
-    <p>No data containers found under {{ choice }} criteria for version {{ ver }} of trip {{ trip }} of this vessel.</p> 
-
     {% endif %}
 
 </div>

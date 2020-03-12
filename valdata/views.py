@@ -11,7 +11,7 @@ from django.conf import settings
 from collections import OrderedDict
 # from .fusioncharts import FusionCharts
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 import io
 import os
@@ -156,6 +156,7 @@ def RamdomColor():
         b = random.randint(0,255)
 
     return str("rgb({},{},{});".format(r,g,b))
+
 
 def CheckVessel(codeVoyage):
     # =============================================
@@ -403,14 +404,49 @@ def ListContainers(request, trip, ver):
 # ====== Vessel DashBoard ==============================================
 # ===================================================================
 
+
+def DemurrageList(choice, trip, ver):
+    # FILTERING THE CONTAINERS IN THE PORT COLLECTING DEMURRAGE
+    hoje = datetime.now()
+    days7_week = datetime.now()-timedelta(days=7)
+    days15_warning = datetime.now()-timedelta(days=15)
+    days_critical = datetime.now()-timedelta(days=720)
+
+    if choice == "critical":
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days_critical, days15_warning])
+
+    if choice == "weekold":
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days7_week, hoje])
+
+    if choice == "warning":
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days15_warning, days7_week])
+
+    if choice == "notarrived":
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__isnull=True)
+    
+
+
+@login_required(login_url='login')
+def Demurrage(request, choice, trip, ver):
+    # =============================================
+    # this VIEW updates the SAIL date of the vessel
+    # 
+    # =============================================
+
+    data = {}
+    data['container'] = DemurrageList(choice, trip, ver)
+    data['choice'] = choice
+    data['header'] = "Demurrage"
+    return render(request, 'valdata/contlist.html', data)
+
+
 @login_required(login_url='login')
 def vslSailDate(request, trip, ver, sdate):
     # =============================================
     # this VIEW updates the SAIL date of the vessel
     # 
     # =============================================
-    sailDate = Vessels.objects.filter(voyage=trip).filter(checkID=ver
-    ).update(saleDate=sdate)
+    sailDate = Vessels.objects.filter(voyage=trip).filter(checkID=ver).update(saleDate=sdate)
 
 
 @login_required(login_url='login')
@@ -420,11 +456,6 @@ def vsldash(request, trip, ver):
     # PORTDATA that has been uploaded
     # =============================================
     data = {}
-
-    # bookings = PortData.objects.all().count()
-
-    # Getting the name of the Vessel
-    # vessel = PortData.objects.get(voyage=trip)
 
     # Getting the number of Bookings on this Vessel
     bookings = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(Count('booking', distinct=True))
@@ -469,12 +500,7 @@ def vsldash(request, trip, ver):
         podTotal += k["c"]
 
 
-    # print("typeTotal > {}".format(typeTotal))
-    # print("podTotal > {}".format(podTotal))
-    # print(podKey)
-    # print(podValue)
-
-    # If there AREN ships
+    # If there ARE ships
     if tweight['total_weights'] is not None:
         data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
         data['bookings'] = bookings
@@ -488,6 +514,11 @@ def vsldash(request, trip, ver):
         data['version'] = ver
         data['tweight'] = "{:,}".format(int(tweight['total_weights']/1000)) 
         data['cweight'] = "{:,}".format(int(cweight['total_weights']/1000)) 
+        data['weekoldCount'] = DemurrageList("weekold", trip, ver).aggregate(Count('serial', distinct=True))
+        data['warningCount'] = DemurrageList("warning", trip, ver).aggregate(Count('serial', distinct=True))
+        data['criticalCount'] = DemurrageList("critical", trip, ver).aggregate(Count('serial', distinct=True))
+        data['notarrivedCount'] = DemurrageList("notarrived", trip, ver).aggregate(Count('serial', distinct=True))
+        
 
         template = "valdata/vsldash.html"
         return render(request, template, data)

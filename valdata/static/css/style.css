@@ -300,7 +300,8 @@ table td {
 }
 
 #index .vessel:hover {
-      background-color: rgb(207, 197, 219);
+      background-color: hsl(240, 100%, 90%);
+      color: white !important;
 }
 
 #index .botao {
@@ -380,15 +381,6 @@ table td {
       margin-right: 1.5rem;
 }
 
-/* #vsldash .voy {
-      border-radius: 50%;
-      border: 1px solid indigo;
-      background-color: indigo;
-      padding: 5px;
-      color: white;
-      margin-left: 0.5rem;
-} */
-
 #vsldash .version {
       background-color: firebrick;
       color: ghostwhite;
@@ -396,6 +388,85 @@ table td {
       border-radius: 5px;
       text-align: center;
       /* margin-top: 1rem; */
+}
+
+/* ====================== DEMURRAGE ======================  */
+
+#vsldash a {
+      color: white;
+}
+
+#vsldash .demurrage {
+      display: flex;
+      flex-flow: column nowrap;
+      text-align: center;
+}
+
+#vsldash .demurrage h1 {
+      text-align: left;
+}
+#vsldash .demurrage h4 {
+      margin: 0;
+}
+
+#vsldash .demurrage .demuboxes {
+      display: flex;
+      flex-flow: row nowrap;
+}
+
+#vsldash .demurrage .demubox {
+      padding: 0;
+}
+
+#vsldash .demurrage .demubox .alldemu {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      padding: 1rem;
+}
+
+#vsldash .demurrage .high {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: space-around;
+      align-items: center;
+}
+
+#vsldash input[type='radio'] {
+      opacity: 0;
+      position: fixed;
+      width: 0;
+}
+
+#vsldash input[type='radio']:checked + .alldemu {
+      background-color: indigo;
+}
+
+#vsldash .demurrage i {
+      font-size: 3rem;
+}
+
+#vsldash .demurrage .fas {
+      width: 3.4rem;
+      height: 3.4rem;
+      border-radius: 50%;
+      padding: 1.2rem;
+}
+
+#vsldash .demurrage .fas.fa-skull-crossbones {
+      background-color: firebrick;
+}
+
+#vsldash .demurrage .fas.fa-thumbs-up {
+      background-color: green;
+}
+
+#vsldash .demurrage .fas.fa-truck {
+      background-color: orange;
+}
+
+#vsldash .demurrage .fas.fa-exclamation-triangle {
+      background-color: yellow;
+      color: black;
 }
 
 /* ========================= Vessel List ========================= */
