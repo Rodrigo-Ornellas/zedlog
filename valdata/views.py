@@ -407,6 +407,7 @@ def ListContainers(request, trip, ver):
 
 def DemurrageList(choice, trip, ver):
     # FILTERING THE CONTAINERS IN THE PORT COLLECTING DEMURRAGE
+    # SELECT * FROM valdata_portdata WHERE vessel_id=12 AND reefer <> '';
     hoje = datetime.now()
     days7_week = datetime.now()-timedelta(days=7)
     days15_warning = datetime.now()-timedelta(days=15)
@@ -422,7 +423,13 @@ def DemurrageList(choice, trip, ver):
         return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days15_warning, days7_week])
 
     if choice == "notarrived":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__isnull=True)
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__contains='- - -')
+
+    if choice == "hazmaterial":
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).exclude(haz=u'')
+
+    if choice == "reefer":
+        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).exclude(reefer=u'')
     
 
 
@@ -473,31 +480,42 @@ def vsldash(request, trip, ver):
     vdata = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver)
 
     # Summary of Container Type Data for the PIE Graph
+    # GRAPH 1
     ctype = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('tipo').annotate(c=Count('tipo')).order_by('-c')
     typeKey = []
     typeValue = []
     typeTotal = 0
-    # print("====================")
+    # Build data for Chart.JS build the graph
     for k in ctype:
-        # print("key > {}".format(k['tipo']))
         typeKey.append(k["tipo"])
-        # print("Val > {}".format(k["c"]))
         typeValue.append(k["c"])
         typeTotal += k["c"]
 
 
     #  POD or Port of Destination Data for BAR Graph
+    # GRAPH 2
     gpod = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('pod__pcode').annotate(c=Count('pod')).order_by('-c')
     podKey = []
     podValue = []
     podTotal = 0
-    # print("====================")
+    # Build data for Chart.JS build the graph
     for k in gpod:
-        # print("key > {}".format(k['pod__pcode']))
         podKey.append(k["pod__pcode"])
-        # print("Val > {}".format(k["c"]))
         podValue.append(k["c"])
         podTotal += k["c"]
+
+
+    #  LOCATION or Transport Modal for PIE Graph
+    # GRAPH 3
+    location = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('location').annotate(c=Count('location')).order_by('-c')
+    locKey = []
+    locValue = []
+    locTotal = 0
+    # Build data for Chart.JS build the graph
+    for k in location:
+        locKey.append(k["location"])
+        locValue.append(k["c"])
+        locTotal += k["c"]
 
 
     # If there ARE ships
@@ -509,7 +527,9 @@ def vsldash(request, trip, ver):
         data['typeKey'] = typeKey
         data['typeValue'] = typeValue
         data['podKey'] = podKey
-        data['podValue'] = podValue        
+        data['podValue'] = podValue
+        data['locKey'] = locKey
+        data['locValue'] = locValue        
         data['color'] = Vessels.objects.get(voyage=trip, checkID=ver).vcolor
         data['version'] = ver
         data['tweight'] = "{:,}".format(int(tweight['total_weights']/1000)) 
@@ -518,6 +538,8 @@ def vsldash(request, trip, ver):
         data['warningCount'] = DemurrageList("warning", trip, ver).aggregate(Count('serial', distinct=True))
         data['criticalCount'] = DemurrageList("critical", trip, ver).aggregate(Count('serial', distinct=True))
         data['notarrivedCount'] = DemurrageList("notarrived", trip, ver).aggregate(Count('serial', distinct=True))
+        data['hazmaterialCount'] = DemurrageList("hazmaterial", trip, ver).aggregate(Count('serial', distinct=True))
+        data['reeferCount'] = DemurrageList("reefer", trip, ver).aggregate(Count('serial', distinct=True))
         
 
         template = "valdata/vsldash.html"

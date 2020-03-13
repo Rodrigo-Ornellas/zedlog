@@ -1,0 +1,52 @@
+{% block part3 %}
+
+
+    <div class="demurrage part3">
+
+        <div class="heading">
+            <h1>Transport Modal</h1>
+        </div>
+
+        <div class="singlegraph">
+            {% if locValue %}
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function () {
+                    let locs = {
+                        labels: {{ locKey| safe }},
+                    datasets: [ {
+                        label: "Transport Types",
+                        backgroundColor: [ "#5f00a3", "#990aff", "#c370ff", "#e5c2ff" ],
+                        data: {{ locValue }}
+                        } ],
+                    borderColor: "rgb(255, 255, 255)"
+                    };
+
+                let opt3 = {
+                    legend: {
+                        display: true,
+                        position: "right",
+                        labels: {
+                            fontColor: "#333",
+                            fontSize: 16
+                        }
+                    }
+                };
+
+                var context = document.getElementById('piechart3');
+                var chart = new Chart(context, {
+                    type: 'pie',
+                    data: locs,
+                    options: opt3
+                });
+
+                });
+            </script>
+            <div class="singleheader">Transport Type</div>
+            <canvas id="piechart3"></canvas>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+{% endblock %}

@@ -329,7 +329,8 @@ table td {
       /* margin: 0 1rem; */
       padding: 1rem;
       background-color: rgb(158, 131, 188);
-      box-shadow: 3px 3px lightgrey;
+      background-color: hsl(0, 0%, 50%);
+      box-shadow: 1px 1px hsl(0, 0%, 80%);
       border-radius: 5px;
       margin-bottom: 2rem;
       color: white;
@@ -341,11 +342,12 @@ table td {
       font-weight: 800;
 }
 
+#vsldash #piechart3,
 #vsldash #barchart,
 #vsldash #piechart {
       background-color: whitesmoke;
       padding: 1.5rem;
-      border-radius: 5px;
+      border-radius: 0 0 5px 5px;
       margin-bottom: 2rem;
       box-sizing: border-box;
 }
@@ -359,11 +361,11 @@ table td {
       width: 100%;
 }
 
-#vsldash .graphs .singleheader {
+#vsldash .singleheader {
       color: white;
       background-color: grey;
-      padding: 0.5rem 1rem;
-      vertical-align: center;
+      padding: 0.9rem 1rem;
+      text-align: left;
 }
 
 #vsldash .heading {
@@ -412,7 +414,7 @@ table td {
 
 #vsldash .demurrage .demuboxes {
       display: flex;
-      flex-flow: row nowrap;
+      flex-flow: column nowrap;
 }
 
 #vsldash .demurrage .demubox {
@@ -442,6 +444,8 @@ table td {
       background-color: indigo;
 }
 
+/* ========================= VSLDASH PART 2 ========================= */
+
 #vsldash .demurrage i {
       font-size: 3rem;
 }
@@ -465,9 +469,29 @@ table td {
       background-color: orange;
 }
 
+#vsldash .demurrage .fas.fa-temperature-low {
+      background-color: hsl(150, 75%, 0%);
+      /* background-color: hsl(25, 76%, 31%); */
+}
+
+#vsldash .demurrage .fas.fa-radiation {
+      background-color: mediumblue;
+}
+
 #vsldash .demurrage .fas.fa-exclamation-triangle {
       background-color: yellow;
       color: black;
+}
+
+/* ======================== Additional Info After Demurrage ======================== */
+
+#vsldash .demurrage.part3 .heading,
+#vsldash .demurrage.part2 .heading {
+      margin-top: 5rem;
+}
+
+#vsldash .demurrage.part3 .singlegraph {
+      width: 100%;
 }
 
 /* ========================= Vessel List ========================= */
@@ -564,6 +588,16 @@ table td {
             padding-top: 50px;
             box-sizing: border-box;
       }
+
+      #vsldash .demurrage .demuboxes {
+            display: flex;
+            flex-flow: row nowrap;
+            padding: 1rem;
+      }
+
+      #vsldash .demurrage.part3 .singlegraph {
+            width: 50%;
+      }
 }
 
 @media only screen and (min-width: 1000px) {
@@ -610,6 +644,16 @@ table td {
 
       #vsldash {
             padding: 1rem 0;
+      }
+
+      #vsldash .demurrage .demuboxes {
+            display: flex;
+            flex-flow: row nowrap;
+            padding: 1rem;
+      }
+
+      #vsldash .demurrage.part3 .singlegraph {
+            width: 50%;
       }
 
       #vsldash .numbers {

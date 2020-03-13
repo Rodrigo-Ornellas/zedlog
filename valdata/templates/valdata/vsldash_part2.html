@@ -1,64 +1,96 @@
-{% block main %}
-<div id="vsldash" class="wrapper">
+{% block part2 %}
 
-    <div class="demurrage">
+
+<div class="demurrage">
 
     <div class="heading">
         <h1>Demurrage</h1>
     </div>
-        <div class="demuboxes">
-                <a class="box demubox" href="{% url 'urldemurrage' choice='weekold' trip=voyage ver=version %}" >
-                    <div class="alldemu">
-                        <i class="fas fa-thumbs-up"></i>
-                        <div class="high">
-                            <div class="icon">
-                            {{ weekoldCount.serial__count }}
-                            </div>  
-                            <h4>Week Old</h4>
-                        </div>
+    <div class="demuboxes">
+        <a class="box demubox" href="{% url 'urldemurrage' choice='weekold' trip=voyage ver=version %}">
+            <div class="alldemu">
+                <i class="fas fa-thumbs-up"></i>
+                <div class="high">
+                    <div class="icon">
+                        {{ weekoldCount.serial__count }}
                     </div>
-                </a>
+                    <h4>Week Old</h4>
+                </div>
+            </div>
+        </a>
 
 
-                <a class="box demubox" href="{% url 'urldemurrage' choice='warning' trip=voyage ver=version %}" >
-                        <div class="alldemu">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <div class="high">
-                                <div class="icon">
-                                {{ warningCount.serial__count }}
-                                </div>  
-                                <h4>Two Weeks</h4>
-                            </div>
-                        </div>
-                </a>
+        <a class="box demubox" href="{% url 'urldemurrage' choice='warning' trip=voyage ver=version %}">
+            <div class="alldemu">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="high">
+                    <div class="icon">
+                        {{ warningCount.serial__count }}
+                    </div>
+                    <h4>Two Weeks</h4>
+                </div>
+            </div>
+        </a>
 
-                <a class="box demubox" href="{% url 'urldemurrage' choice='critical' trip=voyage ver=version %}" >
-                        <div class="alldemu">
-                            <i class="fas fa-skull-crossbones"></i>
-                            <div class="high">
-                                <div class="icon">
-                                {{ criticalCount.serial__count }}
-                                </div>  
-                                <h4>Critical</h4>
-                            </div>
-                        </div>
-                </a>
+        <a class="box demubox" href="{% url 'urldemurrage' choice='critical' trip=voyage ver=version %}">
+            <div class="alldemu">
+                <i class="fas fa-skull-crossbones"></i>
+                <div class="high">
+                    <div class="icon">
+                        {{ criticalCount.serial__count }}
+                    </div>
+                    <h4>Critical</h4>
+                </div>
+            </div>
+        </a>
 
-                <a class="box demubox" href="{% url 'urldemurrage' choice='notarrived' trip=voyage ver=version %}" >
-                        <div class="alldemu">
-                            <i class="fas fa-truck"></i>
-                            <div class="high">
-                                <div class="icon">
-                                {{ notarrivedCount.serial__count }}
-                                </div>  
-                                <h4>Not Arrived</h4>
-                            </div>
-                        </div>
-                </a>
-
-        </div>
     </div>
-
 </div>
-    
-    {% endblock %}
+
+
+<div class="demurrage part2">
+
+    <div class="heading">
+        <h1>Additional Data</h1>
+    </div>
+    <div class="demuboxes">
+        <a class="box demubox" href="{% url 'urldemurrage' choice='notarrived' trip=voyage ver=version %}">
+            <div class="alldemu">
+                <i class="fas fa-truck"></i>
+                <div class="high">
+                    <div class="icon">
+                        {{ notarrivedCount.serial__count }}
+                    </div>
+                    <h4>Not Arrived to Port</h4>
+                </div>
+            </div>
+        </a>
+
+        <a class="box demubox" href="{% url 'urldemurrage' choice='hazmaterial' trip=voyage ver=version %}">
+            <div class="alldemu">
+                <i class="fas fa-radiation"></i>
+                <div class="high">
+                    <div class="icon">
+                        {{ hazmaterialCount.serial__count }}
+                    </div>
+                    <h4>Hazardous Materials</h4>
+                </div>
+            </div>
+        </a>
+
+        <a class="box demubox" href="{% url 'urldemurrage' choice='reefer' trip=voyage ver=version %}">
+            <div class="alldemu">
+                <i class="fas fa-temperature-low"></i>
+                <div class="high">
+                    <div class="icon">
+                        {{ reeferCount.serial__count }}
+                    </div>
+                    <h4>Reefer</h4>
+                </div>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}
