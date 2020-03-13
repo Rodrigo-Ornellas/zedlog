@@ -1,0 +1,143 @@
+{% block main %}
+<div id="vsldash" class="wrapper">
+
+    <div class="heading">
+        <h1>Summary:&emsp;<i class="fas fa-ship"></i>&emsp;{{ vessel }}</h1>
+        <div>Trip: {{ voyage }}&emsp;<div class="version">v.{{ version }}</div>
+        </div>
+    </div>
+
+    <div class="numbers">
+        <div class="bookings box" style="background-color: {{ color }};">
+            <div class="icon">
+                {{ bookings.booking__count }}
+            </div>
+            <h4>Bookings</h4>
+        </div>
+        <a class="box" style="background-color: {{ color }};" href="{% url 'urlcontlist' trip=voyage ver=version %}">
+            <div class="containers">
+                <div class="icon">
+                    {{ containers.serial__count }}
+                </div>
+                <h4>Containers</h4>
+            </div>
+        </a>
+
+
+        <div class="tweigth box" style="background-color: {{ color }};">
+            <div class="icon">
+                {{ tweight }} t
+            </div>
+            <h4>Total Weigth</h4>
+        </div>
+
+        <div class="cweigth box" style="background-color: {{ color }};">
+            <div class="icon">
+                {{ cweight }} t
+            </div>
+            <h4>Load Weigth</h4>
+        </div>
+
+    </div>
+
+    <div class="graphs">
+
+            <div class="singlegraph ">
+                {% if typeValue %}
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function () {
+                        let data = {
+                            labels: {{ typeKey|safe }},
+                        datasets: [ {
+                            label: "Container Types",
+                            //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                            backgroundColor: [ "#5f00a3", "#990aff", "#c370ff", "#e5c2ff" ],
+                            data: {{ typeValue }}
+                            } ],
+                        borderColor: 'rgb(255, 255, 255)'
+                    };
+
+                    let opt = {
+                        {% comment %} title: {
+                            display: true,
+                            position: "top",
+                            text: "Container Types",
+                            fontSize: 18,
+                            fontColor: "#111",
+                            padding: 10
+                        }, {% endcomment %}
+                        legend: {
+                            display: true,
+                            position: "right",
+                            labels: {
+                                fontColor: "#333",
+                                fontSize: 16
+                            }
+                        },
+
+                    }
+                    // #3b0066  // dark indigo
+                    // #5f00a3 
+                    // #990aff
+                    // #c370ff
+                    // #e5c2ff
+                    var context = document.getElementById('piechart');
+                    var chart = new Chart(context, {
+                        type: 'pie',
+                        data: data,
+                        options: opt
+                    });
+                });
+                </script>
+                {% comment %} <canvas id="piechart" width="500" height="300"></canvas> {% endcomment %}
+                <div class="singleheader">Container Type</div>
+                <canvas id="piechart"></canvas>
+                {% endif %}
+            </div>
+
+
+            <div class="singlegraph">
+                    <script type="text/javascript">
+                        document.addEventListener("DOMContentLoaded", function () {
+                            let info = {
+                                labels: {{ podKey|safe }},
+                                datasets: [ {
+                                    label: "Port of Destination",
+                                    backgroundColor: [ "#3b0066", "#5f00a3", "#990aff", "#c370ff", "#e5c2ff" ],
+                                    data: {{ podValue }}
+                                                } ],
+                                borderColor: 'rgb(255, 255, 255)'
+                            };
+
+                            let opt2 = {
+                                {% comment %} title: {
+                                    display: true,
+                                    position: "top",
+                                    text: "Port of Destination",
+                                    fontSize: 18,
+                                    fontColor: "#111",
+                                    padding: 10
+                                }, {% endcomment %}
+                                legend: {
+                                    display: false
+                                }
+                            }
+
+                            var ctx = document.getElementById('barchart');
+                            var chart = new Chart(ctx, {
+                                type: 'bar',
+                                data: info,
+                                options: opt2
+                            });
+                        });
+                    </script>
+                    <div class="singleheader">Port of Destination</div>
+                    <canvas id="barchart"></canvas>
+            </div>
+    
+
+    </div>
+
+</div>
+    
+    {% endblock %}

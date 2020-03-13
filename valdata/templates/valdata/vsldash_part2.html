@@ -1,0 +1,64 @@
+{% block main %}
+<div id="vsldash" class="wrapper">
+
+    <div class="demurrage">
+
+    <div class="heading">
+        <h1>Demurrage</h1>
+    </div>
+        <div class="demuboxes">
+                <a class="box demubox" href="{% url 'urldemurrage' choice='weekold' trip=voyage ver=version %}" >
+                    <div class="alldemu">
+                        <i class="fas fa-thumbs-up"></i>
+                        <div class="high">
+                            <div class="icon">
+                            {{ weekoldCount.serial__count }}
+                            </div>  
+                            <h4>Week Old</h4>
+                        </div>
+                    </div>
+                </a>
+
+
+                <a class="box demubox" href="{% url 'urldemurrage' choice='warning' trip=voyage ver=version %}" >
+                        <div class="alldemu">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div class="high">
+                                <div class="icon">
+                                {{ warningCount.serial__count }}
+                                </div>  
+                                <h4>Two Weeks</h4>
+                            </div>
+                        </div>
+                </a>
+
+                <a class="box demubox" href="{% url 'urldemurrage' choice='critical' trip=voyage ver=version %}" >
+                        <div class="alldemu">
+                            <i class="fas fa-skull-crossbones"></i>
+                            <div class="high">
+                                <div class="icon">
+                                {{ criticalCount.serial__count }}
+                                </div>  
+                                <h4>Critical</h4>
+                            </div>
+                        </div>
+                </a>
+
+                <a class="box demubox" href="{% url 'urldemurrage' choice='notarrived' trip=voyage ver=version %}" >
+                        <div class="alldemu">
+                            <i class="fas fa-truck"></i>
+                            <div class="high">
+                                <div class="icon">
+                                {{ notarrivedCount.serial__count }}
+                                </div>  
+                                <h4>Not Arrived</h4>
+                            </div>
+                        </div>
+                </a>
+
+        </div>
+    </div>
+
+</div>
+    
+    {% endblock %}

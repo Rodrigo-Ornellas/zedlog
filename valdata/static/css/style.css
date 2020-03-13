@@ -341,11 +341,6 @@ table td {
       font-weight: 800;
 }
 
-#vsldash .graphs {
-      display: flex;
-      flex-flow: column nowrap;
-}
-
 #vsldash #barchart,
 #vsldash #piechart {
       background-color: whitesmoke;
@@ -355,14 +350,20 @@ table td {
       box-sizing: border-box;
 }
 
-/* #vsldash .containertypes {
-      margin-top: 3rem;
-      margin-left: 1rem;
-} */
+#vsldash .graphs {
+      display: flex;
+      flex-flow: column nowrap;
+}
 
-#vsldash .pod,
-#vsldash .containertypes {
+#vsldash .graphs .singlegraph {
       width: 100%;
+}
+
+#vsldash .graphs .singleheader {
+      color: white;
+      background-color: grey;
+      padding: 0.5rem 1rem;
+      vertical-align: center;
 }
 
 #vsldash .heading {
@@ -631,12 +632,11 @@ table td {
 
       #vsldash .graphs {
             flex-flow: row nowrap;
-            margin-top: 2rem;
+            margin-top: 4rem;
             justify-content: end;
       }
 
-      #vsldash .pod,
-      #vsldash .containertypes {
+      #vsldash .graphs .singlegraph {
             margin: 0 1rem;
       }
 
