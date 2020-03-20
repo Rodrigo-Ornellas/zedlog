@@ -1,0 +1,36 @@
+{% block vsllist-component %}
+
+    <div class="toolList">
+    {% if vsl %}
+            {% for v in vsl %}
+            {% comment %} <a href="{% url 'urlvsldash' trip=v.voyage ver=v.version %}"> {% endcomment %}
+            <a href="{% url 'urlvsldash' trip=v.voyage  %}">
+                <div class="vessel" style="color: {{ v.vcolor }}">
+
+                    <div class="left">
+                        <i class="fas fa-ship"></i>
+                        {% if v.shipETAdate != None %}
+                        <div>Sail on: <br>{{ v.shipETAdate|date:'D d' }}</div>
+                        {% else %}
+                        <div>Add Sale Date</div>
+                        {% endif %}
+                    </div>
+                    <div class=" right">
+                        <div class="top">
+                            <h3>{{ v.vcode }}</h3>
+                            <div class="voy">{{ v.voyage }}</div>
+                        </div>
+                        <div class="checked">
+                            <div>uploaded:<br>{{ v.checkedDate|date:'M d - H:i' }}</div>
+                            {% comment %} <div class="version">v.{{ v.version }}</div> {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+
+    {% else %}
+    <p>No trips registered in the database.</p>
+    {% endif %}
+    </div>
+{% endblock %}    

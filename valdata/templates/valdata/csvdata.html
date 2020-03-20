@@ -3,7 +3,7 @@
 {% block main %}
 <div id="csvdata" class="wrapper">
 
-    <h1>Port Uploaded Data</h1>
+    <h1>Port Data Uploaded</h1>
 
     <table class="table">
         <thead>
@@ -12,8 +12,7 @@
                 <th>Type</th>
                 <th>POD</th>
                 <th>Booking</th>
-                <th>Vessel</th>
-                {% comment %} <th>File ID</th> {% endcomment %}
+                {% comment %} <th>Vessel</th> {% endcomment %}
             </tr>
         </thead>
         <tbody>
@@ -23,8 +22,7 @@
                     <td>{{ container.tipo }}</td>
                     <td>{{ container.pod }}</td>
                     <td>{{ container.booking }}</td>
-                    <td>{{ container.vessel }}</td>
-                    {% comment %} <td>{{ container.filefk }}</td> {% endcomment %}
+                    {% comment %} <td>{{ container.vessel.vslfull }}</td> {% endcomment %}
                 </tr>        
             {% endfor %}
         </tbody>

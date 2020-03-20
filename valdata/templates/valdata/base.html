@@ -22,9 +22,9 @@
             <input type="checkbox" id="nav-toggle" class="nav-toggle" >
             <nav>
                 <ul>
-                    {% comment %} <li><a href="{% url 'urllogout' %}">Logout</a></li> {% endcomment %}
                     {% if user.is_authenticated %}
-                    {% comment %} <li><a href="{% url 'urlscheduleget' %}">Upload Schedule</a></li> {% endcomment %}
+                    <li><a href="{% url 'urllistschedule' %}">Calendar</a></li>
+                    <li><a href="{% url 'urlscheduleget' %}">Schedule</a></li>
                     <li><a href="{% url 'urlcsvupload' %}">Upload Data</a></li>
                     <li><a href="{% url 'urlcsvdata' %}">View Data</a></li>
                     <li><a href="{% url 'urlportfiles' %}">Manage Files</a></li>

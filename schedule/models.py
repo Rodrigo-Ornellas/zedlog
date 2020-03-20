@@ -7,4 +7,5 @@ class SchedFILE(models.Model):
     uploaded_by = models.ForeignKey(
         User, on_delete=models.CASCADE, default=None)
     date = models.DateField(auto_now_add=True)
-    filename = models.FileField()
+    fnamePDF = models.FileField()
+    fnameCSV = models.FileField()

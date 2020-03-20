@@ -1,17 +1,15 @@
 from django.shortcuts import render, redirect
+from datetime import datetime, timedelta
+from django.conf import settings
 from django.http import HttpResponseRedirect
+
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib import messages
-from .forms import PortFILEForm
-from .models import PortFILE, PortData, Vessels, PortName, Containers
 from django.contrib.auth import logout
-from django.conf import settings
 
 from collections import OrderedDict
-# from .fusioncharts import FusionCharts
 
-from datetime import datetime, timedelta
 import csv
 import io
 import os
@@ -23,11 +21,16 @@ from django.db.models import Q
 
 import random
 
+from .models import PortFILE, PortData, Vessels, PortName, Containers
+from .forms import PortFILEForm
+# from schedule.views import convertDate
+
 # ====== HOME PAGE ==================================================
 # ===================================================================
 
 
 def index(request):
+    # working OK
     # =============================================
     # this VIEW triggers the HOMEPAGE
     # if logged it will show MENU of Options
@@ -43,9 +46,8 @@ def index(request):
 # ===================================================================
 
 @login_required(login_url='login')
-# def portFILES(request):
 def PORTFL_ListFiles(request):
-    # PORTFL_ListFiles > working OK!
+    # working OK
     # =============================================
     # this VIEW shows a list of files that have been uploaded
     # =============================================
@@ -56,15 +58,21 @@ def PORTFL_ListFiles(request):
     return render(request, 'valdata/portfiles.html', data)
 
 
-# def deleteFile(request, id):
+@login_required(login_url='login')
 def PORTFL_Del(request, id):
-    # PORTFL_Del > working OK!
+    # working OK
     # =============================================
     # this VIEW deletes the selected item from
     # the database and the corresponding file from storage
     # =============================================
+
+    # Get the PortFile object
     file = PortFILE.objects.filter(pk=id)
+
+    # Delete the file
     delFile = os.path.join(str(settings.MEDIA_ROOT), str(file[0].filename))
+
+    # Get the correcponding PortData
     data = PortData.objects.filter(filefk=id)
 
     # 1) This deletes the DATA associated with the file from PortData model.
@@ -74,7 +82,7 @@ def PORTFL_Del(request, id):
 
     # 2) Deletes the FILES from storage
     if os.path.exists(delFile):
-        print('DELETED')
+        # print('DELETED')
         os.remove(delFile)
 
     # 3) Deletion of DATA from PORTFILE model
@@ -87,9 +95,7 @@ def PORTFL_Del(request, id):
 
 
 @login_required(login_url='login')
-# def csvupload(request):
 def PORTFL_Upload(request):
-    # PORTFL_Upload > working OK!
     # =============================================
     # this VIEW uploads the csv FILE from the PORT
     # and saves the date to the database
@@ -97,22 +103,28 @@ def PORTFL_Upload(request):
     prompt = {}
     template = "valdata/csvupload.html"
     
-
+    print("HERE IS WORKING - 00")
     if request.method == 'POST':
         form = PortFILEForm(request.POST, request.FILES)
+        print("HERE IS WORKING - 01")
         if form.is_valid():
-            print(request.FILES)
+            print("HERE IS WORKING - 02")
+            # print(request.FILES)
             try:
                 instance = form.save(commit=False)
                 instance.uploaded_by = request.user
                 instance.save()
-                PORTDT_SaveData(instance)
-                # return redirect('urlportfiles')
+
+                print("HERE IS WORKING - 03")
+                # This gets the file data (PORTData) and saves to database
+                stats = PORTDT_SaveData(instance)
+                print("stats from PORTFL_Upload > {}".format(stats))
                 return redirect('urlvsllist')
             except:
-               return redirect('urlmessage', msg='Fatal Error: error while uploading file.')
+               return redirect('urlmessage', msg='Fatal Error: (from PORTFL_Upload view) error while uploading file.')
 
     else:
+        print("HERE IS WORKING - 04")
         prompt['form'] = PortFILEForm()
         prompt['user'] = request.user
 
@@ -145,7 +157,13 @@ def message(request, msg):
     # when corresponding PORT FILE is deleted
     # =============================================
 
-def RamdomColor():    
+def RamdomColor():
+    # > working OK!
+    # =============================================
+    # this Function generates 
+    # RANDOM color code for STYLING
+    # =============================================
+ 
     for i in range(1,20):
         r = random.randint(0,200)
 
@@ -158,50 +176,55 @@ def RamdomColor():
     return str("rgb({},{},{});".format(r,g,b))
 
 
-def CheckVessel(codeVoyage):
+def CreateVessel(code, voy):
+    # > NOT working <<<<<<<<<
     # =============================================
-    # this VIEW does NOT exist.
+    # this is NOT a VIEW.
+    # THIS IS NOT WORKING YET
+    # this function will create 
+    # a VESSEL when it does NOT exist
+    # =============================================    
+    vsl = Vessels(vcode=code, voyage=voy)
+    vsl.save()
+    print("vsl > {}".format(vsl))
+    print("vsl.code > {}".format(vsl.vcode))
+    return vsl
+
+
+def CheckVessel(codeVoyage):
+    # > working OK!    
+    # =============================================
+    # this is NOT a VIEW.
     # function called from PORTDT_SaveData to
     # check if the VESSEL data already exists in the database
     # returns either '' or Vessel ID (for Foreign Key)
     # =============================================
 
-    # print(" code / voyage > {}".format(codeVoyage))
-    code = codeVoyage.split(' / ')[0]
-    voy = codeVoyage.split(' / ')[1]
-    color = RamdomColor()
-    print(color)
-    # print(" code > {}".format(code))
-    # print(" voyage > {}".format(voyage))
-
+    print("codeVoyage > {}".format(codeVoyage))
+    vslcode = codeVoyage.split(' / ')
+    print("vslcode[0] > {}".format(vslcode[0]))
+    print("vslcode[1] > {}".format(vslcode[1]))
     try:
-        # print('started')
-        vsl = Vessels.objects.get(vcode=code)
-        # print("vsl.checkID > {}".format(vsl.checkID))
-        newvsl = Vessels(vcode=code, voyage=voy, checkID=(vsl.checkID + 1), vcolor=vsl.vcolor)
-        newvsl.save()
-        # print("vsl > {}".format(vsl))
-        # print("vsl.code > {}".format(vsl.vcode))
-        # print('worked')
-    # except Content.DoesNotExist:
-    #     print('failed! > 1')
+        # vsl = Vessels.objects.get(Q(vcode=vslcode[0]), Q(voyage=vslcode[1]))
+        vsl = Vessels.objects.get(vcode=vslcode[0])
+        print("CHECK VESSEL line 180 > {}".format(vsl))
+        
+        # This code below would DUPLICATE the VESSEL
+        # ==========================================
+        # version = vsl.version + 1
+        # vsl.pk = None
+        # vsl.save()
+        # vsl.update(version=version)
+        # ==========================================
+        return vsl
     except:
-        print('failed! > 1 - CheckVessel')
-        try: 
-            # print('started2')
-            newvsl = Vessels(vcode=code, voyage=voy, checkID=1,vcolor=color)
-            newvsl.save()
-            # print("vsl > {}".format(vsl))
-            # print("vsl PK > {}".format(vsl.pk))
-            # print("vsl.code > {}".format(vsl.vcode))            
-            # print('ended2')
-        except:
-            print('failed! > 2 - CheckVessel')
+        return ''
 
-    return newvsl
+    
 
 @login_required(login_url='login')
 def ListVessels(request):
+    # > working OK!
     # =============================================
     # this VIEW lists all the trips
     # function called from PORTDT_SaveData to
@@ -215,7 +238,20 @@ def ListVessels(request):
 
 
 
+@login_required(login_url='login')
+def listSchedule(request):
+    # > working OK!
+    # =============================================
+    # this VIEW lists all vessels
+    # =============================================    
+    data = {}
+    data['vessel'] = Vessels.objects.filter(shipETAdate__gte=datetime.now()-timedelta(days=21))
+    return render(request, 'valdata/schedule.html', data)
+
+
+
 def CheckPort(code):
+    # > working OK!
     # =============================================
     # this VIEW does NOT exist.
     # function called from PORTDT_SaveData to
@@ -238,6 +274,7 @@ def CheckPort(code):
 
 
 def CheckContainer(zname, mod, dest):
+    # > working OK!
     # =============================================
     # this VIEW does NOT exist.
     # function called from PORTDT_SaveData to
@@ -253,7 +290,10 @@ def CheckContainer(zname, mod, dest):
     except:
         print('failed! > 1 - CheckContainer')
         try:
-            container = Containers(containerID=zname, ctype=mod, leftTo=dest, isActive=True)
+            # print("zname > {}".format(zname))
+            # print("mod > {}".format(mod))
+            # print("dest > {}".format(dest))
+            container = Containers(serial=zname, ctype=mod, pod=dest)
             container.save()
         except:
             print('failed! > 2 - CheckContainer <<<<<<')
@@ -263,8 +303,7 @@ def CheckContainer(zname, mod, dest):
 
 @login_required(login_url='login')
 def PORTDT_ListData(request):
-    # def csvdata(request):
-    # PORTDT_ListData
+    # > working OK!
     # =============================================
     # this VIEW uploaded the csv DATA from the PORT
     # and saves the date to the database
@@ -276,8 +315,6 @@ def PORTDT_ListData(request):
 
 
 def PORTDT_SaveData(passedFile):
-    # def saveCSV(request, passedFile):
-    # PORTDT_SaveData
     # ================================================
     # this function reads the CSV file that was UPLOADED
     # and saves the PORT CSV DATA to the database
@@ -302,84 +339,90 @@ def PORTDT_SaveData(passedFile):
 
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
     vesselID = ''
+    executed = 0
+    totrows = 0
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+
+        # counters control
+        totrows += 1
 
         # get the name of the VESSEL
         if vesselID == '':
             vesselID = CheckVessel(column[11])
-            # vesselName = column[11]
-            # print('1) vessel ID > {}'.format(vesselID.pk))
 
-        # Check and Update List of Ports in the DataBase
-        portObj, portNAME = CheckPort(column[7])
-        # print('2) port name > {}'.format(portNAME))
-        # print('2) port ID > {}'.format(portObj.pk))
 
-        # Check and Update List of Containers in the DataBase
-        contObject = CheckContainer(column[0], column[1], portObj)
-        # print('3) container > {}'.format(contObject.containerID))
-
-        # CONVERTING the existing DATE format into the
+        # declaring DATE variable
         cDate = '- - -'
-        if column[15] != '':
-            cDate = convertDate(column[15])
-            print(cDate)
+
+        # print ("vesselID > {}".format(vesselID))
+        # print ("ALL columns > {} / {} / {} / {} / {} / {} / {}".format(column[0], column[1], column[11],column[3], column[4], column[5], column[6]))
+        if vesselID != '':
+            
+            # counters control
+            executed += 1
+            print ("ENTERED <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< {}".format(executed))
+
+            # Check and Update List of Ports in the DataBase
+            portObj, portNAME = CheckPort(column[7])
+
+            # Check and Update List of Containers in the DataBase
+            contObject = CheckContainer(column[0], column[1], portObj)
+                        
+            # convert the TEXT date infor into DATE objects                 # <<<<<<< PROBLEM HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            if column[15] == "":
+                try:
+                    cDate = convertDate(column[15], "original")
+                except:
+                    print("ERROR caught")
+                    cDate = ""
+            else:
+                cDate = Null
         
-        _, created = PortData.objects.update_or_create(
-            # ** numero de identificacao do container
-            filefk=passedFile,
-            vessel=vesselID,          # nome do navio
-            serial=contObject,
-            tipo=column[1],           # ** tipo e tamanho do container
-            location=column[4],       # trem / truck ou yard
-            full=column[6],           # freight kind = full ou empty
-            pod=portObj,               # ** pod = port of destination
-            position=column[8],       # posição no trem ou truck ou yard
-            booking=column[9],        # ** registro da ZIM
-            peso=column[12],          # peso total do container
-            carga=column[13],         # peso da carga
-            arrival=cDate,            # time of arrival to YARD
-            # em reparo ou onhold para proximo navio
-            onhold=column[16],
-            commodity=column[17],     # descrição da carga
-            haz=column[18],           # hazerdous material
-            reefer=column[19],        # quando necessita de refrigeração
-            ondock=column[21],        # arrived to terminal
-            oog=column[22]
-            # carga especial com dimensões especiais - necessita de procedimentos especiais
-        )
+            print("vesselID.vcode > {}".format(vesselID.vcode))
+            _, created = PortData.objects.update_or_create(
+                # ** numero de identificacao do container
+                filefk      = passedFile,
+                vessel      = vesselID,          # vessel object
+                serial      = contObject,
+                tipo        = column[1],           # ** tipo e tamanho do container
+                location    = column[4],       # trem / truck ou yard
+                full        = column[6],           # freight kind = full ou empty
+                pod         = portObj,               # ** pod = port of destination
+                position    = column[8],       # posição no trem ou truck ou yard
+                booking     = column[9],        # ** registro da ZIM
+                peso        = column[12],          # peso total do container
+                carga       = column[13],         # peso da carga
+                arrival     = cDate,            # time of arrival to YARD
+                # em reparo ou onhold para proximo navio
+                onhold      = column[16],
+                commodity   = column[17],     # descrição da carga
+                haz         = column[18],           # hazerdous material
+                reefer      = column[19],        # quando necessita de refrigeração
+                ondock      = column[21],        # arrived to terminal
+                oog         = column[22],
+                # carga especial com dimensões especiais - necessita de procedimentos especiais
+            )
+
+        print ("totrows > {}".format(totrows))
+        print ("executed > {}".format(executed))
+        return [totrows, executed]
 
 
-def convertDate(data):
-    # PORTDT_formatdate
-    # ============================================
-    # NOT a VIEW
-    # support function for the SAVECsv FUNCTION
-    # > converts date string to date object
-    # data sample
-    # 11-17-2018 4:41:35 PM
-    # 11-19-2018 11:19:22 AM
-    # ============================================
+def getVersion(code):
+    # ================================================
+    # this is not a VIEW
+    # this function checks if the VESSEL exists 
+    # and returns the version plus 1
+    # ================================================
+    try:
+        # ver = PortData.objects.get(vcode=code)
+        ver = VesselPortData.objects.get(vsl__vcode=code)
+        print("GET VERSION vessel version > {}".format(ver))
+        return ver.version + 1
+    except:
+        print('getVersion - 0')
+        return 0
 
-    print('data conversion > {}'.format(data))
-    # splits the date string into date and time and PM/AM
-    check = data.split(' ')
-
-    # splits the time string into hour/minute/second
-    hora = check[1].split(':')
-
-    # fixes the hour to 24hour format
-    if check[-1] == 'PM' and hora[0] != '12':
-        hora[0] = int(hora[0]) + 12
-
-    if check[-1] == 'AM' and hora[0] == '12':
-        hora[0] = '00'
-
-    # puts the date string back together
-    data = str(check[0]) + str(' ') + str(hora[0]) + \
-        str(':') + str(hora[1]) + str(':') + str(hora[2])
-
-    return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
 
 # ====== END > PORTDATA ============================================
 # ===================================================================
@@ -394,10 +437,11 @@ def ListContainers(request, trip, ver):
     # =============================================    
     data = {}
     data['user'] = request.user
-    data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
+    # data['vessel'] = Vessels.objects.get(voyage=trip, version=ver).vcode
+    data['vessel'] = Vessels.objects.get(voyage=trip).vcode
     data['trip'] = trip
     data['ver'] = ver
-    data['container'] = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).order_by('booking')
+    data['container'] = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).order_by('booking')
     return render(request, 'valdata/contlist.html', data)
 
 
@@ -408,28 +452,30 @@ def ListContainers(request, trip, ver):
 def DemurrageList(choice, trip, ver):
     # FILTERING THE CONTAINERS IN THE PORT COLLECTING DEMURRAGE
     # SELECT * FROM valdata_portdata WHERE vessel_id=12 AND reefer <> '';
-    hoje = datetime.now()
+    # hoje = datetime.now()
+    hoje = datetime.strptime('02-29-2020 12:00:00', '%m-%d-%Y %H:%M:%S')
+    print(hoje)
     days7_week = datetime.now()-timedelta(days=7)
     days15_warning = datetime.now()-timedelta(days=15)
     days_critical = datetime.now()-timedelta(days=720)
 
     if choice == "critical":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days_critical, days15_warning])
+        return PortData.objects.filter(vessel__voyage=trip).filter(version=ver).filter(arrival__range=[days_critical, days15_warning])
 
     if choice == "weekold":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days7_week, hoje])
+        return PortData.objects.filter(vessel__voyage=trip).filter(version=ver).filter(arrival__range=[days7_week, hoje])
 
     if choice == "warning":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__range=[days15_warning, days7_week])
+        return PortData.objects.filter(vessel__voyage=trip).filter(version=ver).filter(arrival__range=[days15_warning, days7_week])
 
     if choice == "notarrived":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).filter(arrival__contains='- - -')
+        return PortData.objects.filter(vessel__voyage=trip).filter(version=ver).filter(arrival__contains='- - -')
 
     if choice == "hazmaterial":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).exclude(haz=u'')
+        return PortData.objects.filter(vessel__voyage=trip).filter(version=ver).exclude(haz=u'')
 
     if choice == "reefer":
-        return PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).exclude(reefer=u'')
+        return PortData.objects.filter(vessel__voyage=trip).filter(version=ver).exclude(reefer=u'')
     
 
 
@@ -447,13 +493,13 @@ def Demurrage(request, choice, trip, ver):
     return render(request, 'valdata/contlist.html', data)
 
 
-@login_required(login_url='login')
-def vslSailDate(request, trip, ver, sdate):
-    # =============================================
-    # this VIEW updates the SAIL date of the vessel
-    # 
-    # =============================================
-    sailDate = Vessels.objects.filter(voyage=trip).filter(checkID=ver).update(saleDate=sdate)
+# @login_required(login_url='login')
+# def vslSailDate(request, trip, ver, sdate):
+#     # =============================================
+#     # this VIEW updates the SAIL date of the vessel
+#     # 
+#     # =============================================
+#     sailDate = Vessels.objects.filter(voyage=trip).update(shipETDdate=sdate)
 
 
 @login_required(login_url='login')
@@ -465,23 +511,23 @@ def vsldash(request, trip, ver):
     data = {}
 
     # Getting the number of Bookings on this Vessel
-    bookings = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(Count('booking', distinct=True))
+    bookings = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).aggregate(Count('booking', distinct=True))
 
     # Getting the number of Containers on this Vessel
-    containers = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(Count('serial', distinct=True))
+    containers = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).aggregate(Count('serial', distinct=True))
 
     # Adding the total weight of the Containers and Cargo
-    tweight = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(total_weights=Sum('peso'))
+    tweight = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).aggregate(total_weights=Sum('peso'))
 
     # Adding the total weight of the Containers and Cargo
-    cweight = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).aggregate(total_weights=Sum('carga'))
+    cweight = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).aggregate(total_weights=Sum('carga'))
 
     # Adding the total weight of the Containers and Cargo
-    vdata = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver)
+    vdata = PortData.objects.filter(vessel__voyage=trip).filter(version=ver)
 
     # Summary of Container Type Data for the PIE Graph
     # GRAPH 1
-    ctype = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('tipo').annotate(c=Count('tipo')).order_by('-c')
+    ctype = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).values('tipo').annotate(c=Count('tipo')).order_by('-c')
     typeKey = []
     typeValue = []
     typeTotal = 0
@@ -494,7 +540,7 @@ def vsldash(request, trip, ver):
 
     #  POD or Port of Destination Data for BAR Graph
     # GRAPH 2
-    gpod = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('pod__pcode').annotate(c=Count('pod')).order_by('-c')
+    gpod = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).values('pod__pcode').annotate(c=Count('pod')).order_by('-c')
     podKey = []
     podValue = []
     podTotal = 0
@@ -507,7 +553,7 @@ def vsldash(request, trip, ver):
 
     #  LOCATION or Transport Modal for PIE Graph
     # GRAPH 3
-    location = PortData.objects.filter(vessel__voyage=trip).filter(vessel__checkID=ver).values('location').annotate(c=Count('location')).order_by('-c')
+    location = PortData.objects.filter(vessel__voyage=trip).filter(version=ver).values('location').annotate(c=Count('location')).order_by('-c')
     locKey = []
     locValue = []
     locTotal = 0
@@ -520,7 +566,7 @@ def vsldash(request, trip, ver):
 
     # If there ARE ships
     if tweight['total_weights'] is not None:
-        data['vessel'] = Vessels.objects.get(voyage=trip, checkID=ver).vcode
+        data['vessel'] = Vessels.objects.get(voyage=trip, version=ver).vcode
         data['bookings'] = bookings
         data['containers'] = containers
         data['voyage'] = trip
@@ -530,7 +576,7 @@ def vsldash(request, trip, ver):
         data['podValue'] = podValue
         data['locKey'] = locKey
         data['locValue'] = locValue        
-        data['color'] = Vessels.objects.get(voyage=trip, checkID=ver).vcolor
+        data['color'] = Vessels.objects.get(voyage=trip, version=ver).vcolor
         data['version'] = ver
         data['tweight'] = "{:,}".format(int(tweight['total_weights']/1000)) 
         data['cweight'] = "{:,}".format(int(cweight['total_weights']/1000)) 
@@ -552,3 +598,88 @@ def vsldash(request, trip, ver):
 
 # ====== END > Vessel Dashboard ===================================================
 # ==========================================================================
+
+
+
+
+
+# ********************
+# ********************
+# ********************
+
+def convertDate(data, opt):
+    # > working OK!
+    # ============================================
+    # NOT a VIEW
+    # support function
+    # > converts date string to date object
+    # data sample
+    # "Wed-26-Feb 17:00"
+    # https://www.programiz.com/python-programming/datetime/strptime
+    # ============================================
+
+    if data != "":
+
+        if opt == "full":
+            # splits the date string into date and time and PM/AM
+            check = data.split(' ')
+
+            # splits the time string into hour/minute/second
+            hora = check[1].split(':')
+
+            # puts the date string back together
+            data = str(check[0]) + str(' ') + str(hora[0]) + \
+                str(':') + str(hora[1])
+            
+            print('FULL data conversion > {}'.format(data))
+            return datetime.strptime(data, '%a-%d-%b %H:%M')
+
+        elif opt == "midway":
+            # splits the date string into date and time and PM/AM
+            check = data.split(' ')
+
+            # splits the time string into hour/minute/second
+            hora = check[1].split(':')
+
+            # puts the date string back together
+            data = str(check[0]) + str(' ') + str(hora[0]) + \
+                str(':') + str(hora[1])
+
+            print('MIDWAY data conversion > {}'.format(data))
+            return datetime.strptime(data, '%d-%b %H:%M')
+
+        elif opt == "notime":
+            print('NOTIME data conversion > {}'.format(data))
+            return datetime.strptime(data, '%a-%d-%b')        
+        elif opt == "min":
+            print('MIN data conversion > {}'.format(data))
+            return datetime.strptime(data, '%d-%b')
+        elif opt == "original":
+            # ============================================
+            # data sample
+            # 11-17-2018 4:41:35 PM
+            # 11-19-2018 11:19:22 AM
+            # ============================================
+            
+            # splits the date string into date and time and PM/AM
+            check = data.split(' ')
+
+            # splits the time string into hour/minute/second
+            hora = check[1].split(':')
+
+            # fixes the hour to 24hour format
+            if check[-1] == 'PM' and hora[0] != '12':
+                hora[0] = int(hora[0]) + 12
+
+            if check[-1] == 'AM' and hora[0] == '12':
+                hora[0] = '00'
+
+            # puts the date string back together
+            data = str(check[0]) + str(' ') + str(hora[0]) + \
+                str(':') + str(hora[1]) + str(':') + str(hora[2])
+
+            print('ORIGINAL data conversion > {}'.format(data))
+            return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
+    
+    print('data conversion > EMPTY')
+    return data

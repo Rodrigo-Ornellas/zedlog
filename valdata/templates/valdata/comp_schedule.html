@@ -1,0 +1,36 @@
+{% block schedule-component %}
+
+<div id="schedule" class="wrapper">
+
+    <h1>Ship Schedule for {{ vsl.portName}}</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Vessel</th>
+                <th>Voyage</th>
+                <th>Cut Off</th>
+                <th>ETA</th>
+                <th>Loading Start</th>
+                <th>Departure Date</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for vsl in vessel %}
+                <tr>
+                    <td>{{ vsl.vslfull }}</td>
+                    <td>{{ vsl.voyage }}</td>
+                    <td>{{ vsl.cutoffDate|date:'M d - H:i' }}</td>
+                    <td>{{ vsl.shipETAdate|date:'M d' }}</td>
+                    <td>{{ vsl.shipETAtime }}</td>
+                    <td>{{ vsl.shipETDdate|date:'M d - H:i' }}</td>
+                    {% comment %} <td><a class="deletebtn" href="{% url 'urldeletefile' file.id %}">delete</a></td> {% endcomment %}
+                </tr>        
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

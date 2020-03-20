@@ -1,46 +1,51 @@
 # from pyPdf import PdfFileReader
 # from StringIO import StringIO
-import pyPdf
+
+# importing required modules 
+import PyPDF2 
+import tabula
+
+# convert PDF into CSV file
+tabula.convert_into("DPVesselSchedule3.pdf", "output3.csv", output_format="csv", pages='all')
+
+if False:
+    # creating a pdf file object 
+    pdfFileObj = open('DPVesselSchedule2.pdf', 'rb') 
+
+    # creating a pdf reader object 
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj) 
+
+    # printing number of pages in pdf file 
+    print('number of pages: {}'.format(pdfReader.numPages))
+    pages = pdfReader.numPages
+
+    # creating a page object 
+    for i in range(pages):
+        try:
+            print(' ')
+            print('page {}'.format(i))
+            # pageArr.append(pdfReader.getPage(pag))
+            # extracting text from page 
+            print('=================================')
+
+            pageObj = pdfReader.getPage(i)
+            # print(pageObj.extractText())
+
+            # Extracting text from page
+            # And splitting it into chunks of lines
+            text = pageObj.extractText().split("  ")        
+            print('number of lines > {}'.format(len(text)))
+
+            for i in range(len(text)):
+                    # Printing the line
+                    # Lines are seprated using "\n"
+                    print(text[i],end="\n\n\n")
 
 
-from StringIO import StringIO
+            print('*********************************')
+            print(' ')
+        except:
+            print('ERROOOORRRR')
 
-
-def getPDFContent():
-    path = 'DPVesselSchedule.pdf'
-    content = ""
-    num_pages = 2
-    p = file(path, "rb")
-    pdf = pyPdf.PdfFileReader(p)
-    for i in range(0, num_pages):
-        content += pdf.getPage(i).extractText() + "\n"
-    content = " ".join(content.replace(u"\xa0", " ").strip().split())
-    return content
-
-
-# f = open('test.txt', 'w')
-# pdfl = StringIO(getPDFContent(
-#     "DPVesselSchedule.pdf").encode("ascii", "ignore"))
-# for line in pdfl:
-#     f.write(line)
-
-# f.close()
-
-
-# def get_pdf_content_lines(pdf_file_path):
-#     with open(pdf_file_path) as f:
-#         pdf_reader = PdfFileReader(f)
-#         for page in pdf_reader.pages:
-#             for line in page.extractText().splitlines():
-#                 yield line
-
-
-# print('started!!!')
-# for pline in get_pdf_content_lines('DPVesselSchedule.pdf'):
-#     print(pline)
-
-
-# Read each line of the PDF
-pdfContent = StringIO(getPDFContent("test.pdf").encode("ascii", "ignore"))
-for line in pdfContent:
-    print(line)
+    # closing the pdf file object 
+    pdfFileObj.close() 

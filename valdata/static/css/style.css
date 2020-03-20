@@ -293,6 +293,10 @@ table td {
       border: none;
 }
 
+#vsllist .toolList a {
+      margin: 0.5rem;
+}
+
 #index .vessel {
       padding: 1rem 0.5rem;
       border: 1px solid black;
@@ -501,7 +505,6 @@ table td {
       background-color: whitesmoke;
 
       border-radius: 5px;
-      margin-bottom: 2rem;
 
       display: flex;
       flex-flow: row nowrap;
@@ -513,6 +516,7 @@ table td {
       justify-content: space-between;
       align-items: center;
       text-align: center;
+      /* margin-right: 2rem; */
 }
 
 .vessel .right {
@@ -550,6 +554,7 @@ table td {
       padding: 5px;
       color: white;
       margin-left: 0.5rem;
+      font-size: 1rem;
 
       position: absolute;
       left: -50px;
@@ -579,9 +584,11 @@ table td {
       grid-template-columns: 1fr;
 }
 
+/* ======================================================================= */
 /* ===================  Desktop and Tablet VIEWS  ========================= */
+/* ======================================================================= */
 
-@media only screen and (max-width: 999px) and (min-width: 601px) {
+@media only screen and (max-width: 999px) and (min-width: 701px) {
       main {
             width: 100%;
             padding: 0 1rem;
@@ -597,6 +604,29 @@ table td {
 
       #vsldash .demurrage.part3 .singlegraph {
             width: 50%;
+      }
+
+      .vessel .left {
+            margin-right: 1rem;
+      }
+      .vessel .right .top .voy {
+            margin-left: 0;
+            left: -55px;
+            font-size: 1.3rem;
+      }
+
+      #vsllist .toolList {
+            grid-column: 1/3;
+            display: flex;
+            flex-flow: row wrap;
+      }
+
+      #vsllist .toolList a {
+            min-width: 350px;
+            flex: 0 0 45%;
+            margin: 0.5rem;
+            border: 1px solid black;
+            border-radius: 5px;
       }
 }
 
@@ -693,5 +723,27 @@ table td {
             display: grid;
             grid-template-columns: repeat(2 1fr);
             grid-gap: 1rem 3rem;
+      }
+
+      .vessel .left {
+            margin-right: 1rem;
+      }
+      .vessel .right .top .voy {
+            margin-left: 0;
+            left: -55px;
+            font-size: 1.3rem;
+      }
+
+      #vsllist .toolList {
+            grid-column: 1/3;
+            display: flex;
+            flex-flow: row wrap;
+      }
+
+      #vsllist .toolList a {
+            flex: 0 0 45%;
+            margin: 0.5rem;
+            border: 1px solid black;
+            border-radius: 5px;
       }
 }

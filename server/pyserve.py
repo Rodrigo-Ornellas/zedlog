@@ -12,7 +12,7 @@ PORT = 9002
 class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
-            self.path = './DPVesselSchedule.pdf'
+            self.path = './DPVesselSchedule3.pdf'
         return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
 
