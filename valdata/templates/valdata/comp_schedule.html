@@ -2,13 +2,13 @@
 
 <div id="schedule" class="wrapper">
 
-    <h1>Ship Schedule for {{ vsl.portName}}</h1>
+    <h1>Ship Schedules</h1>
 
     <table class="table">
         <thead>
             <tr>
                 <th>Vessel</th>
-                <th>Voyage</th>
+                <th>Line</th>
                 <th>Cut Off</th>
                 <th>ETA</th>
                 <th>Loading Start</th>
@@ -20,7 +20,7 @@
             {% for vsl in vessel %}
                 <tr>
                     <td>{{ vsl.vslfull }}</td>
-                    <td>{{ vsl.voyage }}</td>
+                    <td>{{ vsl.line }}</td>
                     <td>{{ vsl.cutoffDate|date:'M d - H:i' }}</td>
                     <td>{{ vsl.shipETAdate|date:'M d' }}</td>
                     <td>{{ vsl.shipETAtime }}</td>

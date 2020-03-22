@@ -4,7 +4,8 @@
     {% if vsl %}
             {% for v in vsl %}
             {% comment %} <a href="{% url 'urlvsldash' trip=v.voyage ver=v.version %}"> {% endcomment %}
-            <a href="{% url 'urlvsldash' trip=v.voyage  %}">
+            {% comment %} <h2>{{ v.version }}</h2> {% endcomment %}
+            <a href="{% url 'urlvsldash' trip=v.voyage  ver=1 %}">
                 <div class="vessel" style="color: {{ v.vcolor }}">
 
                     <div class="left">
@@ -23,6 +24,7 @@
                         <div class="checked">
                             <div>uploaded:<br>{{ v.checkedDate|date:'M d - H:i' }}</div>
                             {% comment %} <div class="version">v.{{ v.version }}</div> {% endcomment %}
+                            <div class="version">v.1</div>
                         </div>
                     </div>
                 </div>

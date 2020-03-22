@@ -21,7 +21,7 @@ from django.db.models import Q
 
 import random
 
-from .models import PortFILE, PortData, Vessels, PortName, Containers
+from .models import PortFILE, PortData, Vessels, PortName, Containers, VPDConnector
 from .forms import PortFILEForm
 # from schedule.views import convertDate
 
@@ -200,14 +200,14 @@ def CheckVessel(codeVoyage):
     # returns either '' or Vessel ID (for Foreign Key)
     # =============================================
 
-    print("codeVoyage > {}".format(codeVoyage))
+    # print("codeVoyage > {}".format(codeVoyage))
     vslcode = codeVoyage.split(' / ')
-    print("vslcode[0] > {}".format(vslcode[0]))
-    print("vslcode[1] > {}".format(vslcode[1]))
+    # print("vslcode[0] > {}".format(vslcode[0]))
+    # print("vslcode[1] > {}".format(vslcode[1]))
     try:
         # vsl = Vessels.objects.get(Q(vcode=vslcode[0]), Q(voyage=vslcode[1]))
         vsl = Vessels.objects.get(vcode=vslcode[0])
-        print("CHECK VESSEL line 180 > {}".format(vsl))
+        # print("CHECK VESSEL line 180 > {}".format(vsl))
         
         # This code below would DUPLICATE the VESSEL
         # ==========================================
@@ -218,6 +218,7 @@ def CheckVessel(codeVoyage):
         # ==========================================
         return vsl
     except:
+        # Vessels.objects.update_or_create( vslfull="DATE22", portName="deltaport", vcode="DATE", vname="", voyage=22, line="ZED", service="ZP9", erdDate="2020-03-11 17:00:00", cutoffDate="2020-03-11 16:00:00", demurrageRFT="2020-03-15", shipETAdate="2020-03-17", shipETAtime="01:00", shipETDdate="2020-03-18 16:00:00" )
         return ''
 
     
@@ -231,9 +232,17 @@ def ListVessels(request):
     # check if the PORT data already exists in the database
     # returns either '' or Port ID (for Foreign Key)
     # =============================================    
+
+    # try:
+    #     vsl = VPDConnector.objects.all().order_by('vessels__checkedDate')
+    # except:
+    #     vsl = None
+    
+    vsl = Vessels.objects.all().order_by('-checkedDate')
+
     data = {}
     data['user'] = request.user
-    data['vsl'] = Vessels.objects.all().order_by('-checkedDate')
+    data['vsl'] = vsl
     return render(request, 'valdata/vsllist.html', data)
 
 
@@ -258,7 +267,6 @@ def CheckPort(code):
     # check if the PORT data already exists in the database
     # returns either '' or Port ID (for Foreign Key)
     # =============================================
-
     try:
         port = PortName.objects.get(pcode=code)
     except:
@@ -268,7 +276,6 @@ def CheckPort(code):
             port.save()
         except:
             print('failed! > 2 - CheckPort')
-
 
     return port, port.pcode
 
@@ -281,7 +288,7 @@ def CheckContainer(zname, mod, dest):
     # check if the CONTAINER data already exists in the database
     # returns either '' or CONTAINER ID (for Foreign Key)
     # =============================================
-    print("name > {} ***************".format(zname))
+    # print("name > {} ***************".format(zname))
     # print("name > {}".format(cname))
     # print("ctype > {}".format(mod))
     # print("dest > {}".format(dest.pk))
@@ -350,7 +357,6 @@ def PORTDT_SaveData(passedFile):
         if vesselID == '':
             vesselID = CheckVessel(column[11])
 
-
         # declaring DATE variable
         cDate = '- - -'
 
@@ -369,20 +375,27 @@ def PORTDT_SaveData(passedFile):
             contObject = CheckContainer(column[0], column[1], portObj)
                         
             # convert the TEXT date infor into DATE objects                 # <<<<<<< PROBLEM HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            if column[15] == "":
+            if column[15] != "":
                 try:
                     cDate = convertDate(column[15], "original")
                 except:
                     print("ERROR caught")
                     cDate = ""
             else:
-                cDate = Null
+                cDate = None
+
+            # Get new version of the UpLoaded Data
+            ver = getVersion(column[11].split(" / ")[0])
+
+            # Add VesselPortData connection to the DataBase
+            vpd = VPDConnector.objects.update_or_create(vsl=vesselID, version=ver, vcolor=RamdomColor())
         
             print("vesselID.vcode > {}".format(vesselID.vcode))
             _, created = PortData.objects.update_or_create(
                 # ** numero de identificacao do container
                 filefk      = passedFile,
                 vessel      = vesselID,          # vessel object
+                connector   = vpd,
                 serial      = contObject,
                 tipo        = column[1],           # ** tipo e tamanho do container
                 location    = column[4],       # trem / truck ou yard
@@ -403,9 +416,10 @@ def PORTDT_SaveData(passedFile):
                 # carga especial com dimensões especiais - necessita de procedimentos especiais
             )
 
+
         print ("totrows > {}".format(totrows))
         print ("executed > {}".format(executed))
-        return [totrows, executed]
+        # return [totrows, executed]
 
 
 def getVersion(code):
@@ -416,7 +430,7 @@ def getVersion(code):
     # ================================================
     try:
         # ver = PortData.objects.get(vcode=code)
-        ver = VesselPortData.objects.get(vsl__vcode=code)
+        ver = VPDConnector.objects.get(vsl=code)
         print("GET VERSION vessel version > {}".format(ver))
         return ver.version + 1
     except:
@@ -566,7 +580,7 @@ def vsldash(request, trip, ver):
 
     # If there ARE ships
     if tweight['total_weights'] is not None:
-        data['vessel'] = Vessels.objects.get(voyage=trip, version=ver).vcode
+        data['vessel'] = Vessels.objects.get(voyage=trip, vpdconnector__version=ver).vcode
         data['bookings'] = bookings
         data['containers'] = containers
         data['voyage'] = trip
@@ -576,7 +590,7 @@ def vsldash(request, trip, ver):
         data['podValue'] = podValue
         data['locKey'] = locKey
         data['locValue'] = locValue        
-        data['color'] = Vessels.objects.get(voyage=trip, version=ver).vcolor
+        data['color'] = Vessels.objects.get(voyage=trip, vpdconnector__version=ver).vcolor
         data['version'] = ver
         data['tweight'] = "{:,}".format(int(tweight['total_weights']/1000)) 
         data['cweight'] = "{:,}".format(int(cweight['total_weights']/1000)) 
@@ -599,14 +613,6 @@ def vsldash(request, trip, ver):
 # ====== END > Vessel Dashboard ===================================================
 # ==========================================================================
 
-
-
-
-
-# ********************
-# ********************
-# ********************
-
 def convertDate(data, opt):
     # > working OK!
     # ============================================
@@ -618,68 +624,63 @@ def convertDate(data, opt):
     # https://www.programiz.com/python-programming/datetime/strptime
     # ============================================
 
-    if data != "":
+    if "full" in opt:
+        # splits the date string into date and time and PM/AM
+        check = data.split(' ')
 
-        if opt == "full":
-            # splits the date string into date and time and PM/AM
-            check = data.split(' ')
+        # splits the time string into hour/minute/second
+        hora = check[1].split(':')
 
-            # splits the time string into hour/minute/second
-            hora = check[1].split(':')
+        # puts the date string back together
+        data = str(check[0]) + str(' ') + str(hora[0]) + \
+            str(':') + str(hora[1])
+        
+        print('FULL data conversion > {}'.format(data))
+        return datetime.strptime(data, '%a-%d-%b %H:%M')
 
-            # puts the date string back together
-            data = str(check[0]) + str(' ') + str(hora[0]) + \
-                str(':') + str(hora[1])
-            
-            print('FULL data conversion > {}'.format(data))
-            return datetime.strptime(data, '%a-%d-%b %H:%M')
+    elif "midway" in opt:
+        # splits the date string into date and time and PM/AM
+        check = data.split(' ')
 
-        elif opt == "midway":
-            # splits the date string into date and time and PM/AM
-            check = data.split(' ')
+        # splits the time string into hour/minute/second
+        hora = check[1].split(':')
 
-            # splits the time string into hour/minute/second
-            hora = check[1].split(':')
+        # puts the date string back together
+        data = str(check[0]) + str(' ') + str(hora[0]) + \
+            str(':') + str(hora[1])
 
-            # puts the date string back together
-            data = str(check[0]) + str(' ') + str(hora[0]) + \
-                str(':') + str(hora[1])
+        print('MIDWAY data conversion > {}'.format(data))
+        return datetime.strptime(data, '%d-%b %H:%M')
 
-            print('MIDWAY data conversion > {}'.format(data))
-            return datetime.strptime(data, '%d-%b %H:%M')
+    elif "notime" in opt:
+        print('NOTIME data conversion > {}'.format(data))
+        return datetime.strptime(data, '%a-%d-%b')        
+    elif "min" in opt:
+        print('MIN data conversion > {}'.format(data))
+        return datetime.strptime(data, '%d-%b')
+    elif "original" in opt:
+        # ============================================
+        # data sample
+        # 11-17-2018 4:41:35 PM
+        # 11-19-2018 11:19:22 AM
+        # ============================================
+        
+        # splits the date string into date and time and PM/AM
+        check = data.split(' ')
 
-        elif opt == "notime":
-            print('NOTIME data conversion > {}'.format(data))
-            return datetime.strptime(data, '%a-%d-%b')        
-        elif opt == "min":
-            print('MIN data conversion > {}'.format(data))
-            return datetime.strptime(data, '%d-%b')
-        elif opt == "original":
-            # ============================================
-            # data sample
-            # 11-17-2018 4:41:35 PM
-            # 11-19-2018 11:19:22 AM
-            # ============================================
-            
-            # splits the date string into date and time and PM/AM
-            check = data.split(' ')
+        # splits the time string into hour/minute/second
+        hora = check[1].split(':')
 
-            # splits the time string into hour/minute/second
-            hora = check[1].split(':')
+        # fixes the hour to 24hour format
+        if check[-1] == 'PM' and hora[0] != '12':
+            hora[0] = int(hora[0]) + 12
 
-            # fixes the hour to 24hour format
-            if check[-1] == 'PM' and hora[0] != '12':
-                hora[0] = int(hora[0]) + 12
+        if check[-1] == 'AM' and hora[0] == '12':
+            hora[0] = '00'
 
-            if check[-1] == 'AM' and hora[0] == '12':
-                hora[0] = '00'
+        # puts the date string back together
+        data = str(check[0]) + str(' ') + str(hora[0]) + \
+            str(':') + str(hora[1]) + str(':') + str(hora[2])
 
-            # puts the date string back together
-            data = str(check[0]) + str(' ') + str(hora[0]) + \
-                str(':') + str(hora[1]) + str(':') + str(hora[2])
-
-            print('ORIGINAL data conversion > {}'.format(data))
-            return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
-    
-    print('data conversion > EMPTY')
-    return data
+        print('ORIGINAL data conversion > {}'.format(data))
+        return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')

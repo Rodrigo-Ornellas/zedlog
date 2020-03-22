@@ -36,9 +36,8 @@ def downPDF(request):
     print('fnamePDF > {}'.format(fnamePDF))
 
     #  URL from where the FILE will be downloaded
-    # url = "http://localhost:9002/"
-    # str = "http://webservices.globalterminalscanada.com/sites/default/files/DPVesselSchedule.pdf"
-    url = "http://webservices.globalterminalscanada.com/sites/default/files/DPVesselSchedule.pdf"
+    url = "http://localhost:9003/"
+    # url = "http://webservices.globalterminalscanada.com/sites/default/files/DPVesselSchedule.pdf"
 
     # save the PDF file
     urlretrieve(url, fnamePDF)
@@ -94,23 +93,23 @@ def saveSchedule(request):
                     line = column[2],
                     service = column[3],
                     erdDate = convertDate(column[4], "full"),
-                    cutoffDate = convertDate(column[6], "mid"),
+                    cutoffDate = convertDate(column[6], "midway"),
                     demurrageRFT = convertDate(column[7], "min"),
                     shipETAdate = convertDate(column[8], "notime"),
                     shipETAtime = column[9],
                     shipETDdate = convertDate(column[10] + " " + column[11], "midway"),
-                    # checkedDate = autodate,
-                    # checkID = getVersion(vesselID.vcode),
-                    # vcolor = RamdomColor()
             )
 
-    # data['file'] = Vessels.objects.filter(shipETAdate__gte=datetime.now()-timedelta(days=21))
-    data['file'] = Vessels.objects.all()
+    monthAhead = datetime.now()+timedelta(days=60)
+    monthBehind = datetime.now()-timedelta(days=21)
+    data['vessel'] = Vessels.objects.filter(shipETAdate__range=[monthBehind, monthAhead])
+    # data['vessel'] = Vessels.objects.all()
     return render(request, 'valdata/schedule.html', data)
 
 
 
 def convertDate(data, opt):
+    # > working OK!
     # ============================================
     # NOT a VIEW
     # support function
@@ -120,62 +119,72 @@ def convertDate(data, opt):
     # https://www.programiz.com/python-programming/datetime/strptime
     # ============================================
 
-    print('data conversion > {}'.format(data))
+    # splits the date string into date and time and PM/AM
+    check = data.split(' ')
+    print("check[0] > {}".format(check[0]))
 
-    if opt == "full":
-        # ============================================
-        # data sample
-        # Wed-11-Mar 17:00
-        # ============================================
-        # splits the date string into date and time and PM/AM
-        check = data.split(' ')
-
-        # splits the time string into hour/minute/second
+    # splits the time string into hour/minute/second
+    if len(check) > 1:
         hora = check[1].split(':')
+        print("check[1] > {}".format(check[1]))
+
+
+    # check which DATE format to use
+    if "full" in opt:
+
+        # puts the date string back together
+        data = str(check[0]) + str(' ') + str(hora[0]) + \
+            str(':') + str(hora[1])
+        
+        newDate = datetime.strptime(data, '%a-%d-%b %H:%M')
+        if newDate.year < datetime.today().year:
+            data = newDate.replace(year=datetime.today().year)
+
+        print('FULL data conversion > {}'.format(data))
+        # return datetime.strptime(data, '%a-%d-%b %H:%M')
+        return data
+
+    elif "midway" in opt:
 
         # puts the date string back together
         data = str(check[0]) + str(' ') + str(hora[0]) + \
             str(':') + str(hora[1])
 
-        return datetime.strptime(data, '%a-%d-%b %H:%M')
-    elif opt == "midway":
-        # ============================================
-        # data sample MIDWAY
-        # 11-Mar 16:00
-        # ============================================
-                
-        # splits the date string into date and time and PM/AM
-        check = data.split(' ')
+        newDate = datetime.strptime(data, '%d-%b %H:%M')
+        if newDate.year < datetime.today().year:
+            data = newDate.replace(year=datetime.today().year)
 
-        # splits the time string into hour/minute/second
-        hora = check[1].split(':')
+        print('MIDWAY data conversion > {}'.format(data))
+        # return datetime.strptime(data, '%d-%b %H:%M')
+        return data
 
-        # puts the date string back together
-        data = str(check[0]) + str(' ') + str(hora[0]) + \
-            str(':') + str(hora[1])
+    elif "notime" in opt:
 
-        return datetime.strptime(data, '%d-%b %H:%M')
-    elif opt == "notime":
-        return datetime.strptime(data, '%a-%d-%b')        
-    elif opt == "min":
-        # ============================================
-        # data sample MIN
-        # 15-Mar
-        # ============================================
+        newDate = datetime.strptime(data, '%a-%d-%b')
+        if newDate.year < datetime.today().year:
+            data = newDate.replace(year=datetime.today().year)
 
-        return datetime.strptime(data, '%d-%b')
-    elif opt == "original":
+        print('NOTIME data conversion > {}'.format(data))
+        # return datetime.strptime(data, '%a-%d-%b')     
+        return data
+
+    elif "min" in opt:
+
+        newDate = datetime.strptime(data, '%d-%b')
+        if newDate.year < datetime.today().year:
+            data = newDate.replace(year=datetime.today().year)
+
+        print('MIN data conversion > {}'.format(data))
+        # return datetime.strptime(data, '%d-%b')
+        return data
+
+    elif "original" in opt:
         # ============================================
         # data sample
         # 11-17-2018 4:41:35 PM
         # 11-19-2018 11:19:22 AM
         # ============================================
-        print('data conversion > {}'.format(data))
-        # splits the date string into date and time and PM/AM
-        check = data.split(' ')
-
-        # splits the time string into hour/minute/second
-        hora = check[1].split(':')
+        print("ORIGINAL > {}".format(data))
 
         # fixes the hour to 24hour format
         if check[-1] == 'PM' and hora[0] != '12':
@@ -188,4 +197,10 @@ def convertDate(data, opt):
         data = str(check[0]) + str(' ') + str(hora[0]) + \
             str(':') + str(hora[1]) + str(':') + str(hora[2])
 
-        return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')    
+        newDate = datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
+        if newDate.year < datetime.today().year:
+            data = newDate.replace(year=datetime.today().year)
+
+        print('ORIGINAL data conversion > {}'.format(data))
+        # return datetime.strptime(data, '%m-%d-%Y %H:%M:%S')
+        return data

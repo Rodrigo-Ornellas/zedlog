@@ -22,6 +22,19 @@ class PortName(models.Model):
         return ('%s' % (self.pcode))
 
 
+
+class Containers(models.Model):
+    # This MODEL registers new CONTAINERS for an Inventory of Containers
+    serial        = models.CharField(max_length=32)
+    ctype         = models.CharField(max_length=32)
+    pod           = models.ForeignKey(PortName, on_delete=models.CASCADE)
+    isActive      = models.BooleanField(default=True)
+    lastUpdate    = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return ('%s' % (self.serial))
+
+
 class Vessels(models.Model):
     # This MODEL represnts the SHIPS or VESSELS that are being PROCESSED
     vslfull         = models.CharField(max_length=30)
@@ -39,26 +52,26 @@ class Vessels(models.Model):
     shipETDdate     = models.DateTimeField(null=True, blank=True)  # Date when SHIP will leave port
     checkedDate     = models.DateTimeField(auto_now_add=True)  # Checks Confirmed Date
 
+
     def __str__(self):
         return ('%s - %s - %s' % (self.pk, self.vcode, self.voyage))
 
 
-class Containers(models.Model):
-    # This MODEL registers new CONTAINERS for an Inventory of Containers
-    serial        = models.CharField(max_length=32)
-    ctype         = models.CharField(max_length=32)
-    pod           = models.ForeignKey(PortName, on_delete=models.CASCADE)
-    isActive      = models.BooleanField(default=True)
-    lastUpdate    = models.DateField(auto_now_add=True)
+class VPDConnector(models.Model):
+    # This MODEL JOINS Vessels Table with the many uploads of PORTDATA
+    vsl         = models.ForeignKey(Vessels, on_delete=models.CASCADE, null=True)
+    version     = models.IntegerField(blank=True, null=True) # version of the uploaded vessels
+    vcolor      = models.CharField(max_length=255)
 
     def __str__(self):
-        return ('%s' % (self.containerID))
+        return ('%s - %s' % (self.vsl.vslfull,  self.version))
 
 
 class PortData(models.Model):
     # This MODEL represents each UPLOAD of DATA to be processed
-    filefk     = models.ForeignKey(PortFILE, on_delete=models.CASCADE, null=True)
-    vessel     = models.ForeignKey(Vessels, on_delete=models.CASCADE, null=True)    
+    filefk     = models.ForeignKey(PortFILE, on_delete=models.CASCADE)
+    vessel     = models.ForeignKey(Vessels, on_delete=models.CASCADE)    
+    connector  = models.ForeignKey(VPDConnector, on_delete=models.CASCADE)
     serial     = models.ForeignKey(Containers, on_delete=models.CASCADE, null=True)
     tipo       = models.CharField(max_length=10, null=True, blank=True)
     location   = models.CharField(max_length=10, null=True, blank=True)
@@ -78,10 +91,3 @@ class PortData(models.Model):
 
     def __str__(self):
         return ('%s - %s - %s - %s' % (self.serial, self.tipo, self.pod, self.booking))
-
-class VesselPortData(models.Model):
-    # This MODEL JOINS Vessels Table with the many uploads of PORTDATA
-    vsl         = models.ForeignKey(Vessels, on_delete=models.CASCADE, null=True)
-    prtdt       = models.ForeignKey(PortData, on_delete=models.CASCADE, null=True)
-    version     = models.IntegerField(blank=True, null=True) # version of the uploaded vessels
-    vcolor      = models.CharField(max_length=255)    
