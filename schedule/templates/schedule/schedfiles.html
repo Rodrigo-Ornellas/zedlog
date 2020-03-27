@@ -1,0 +1,33 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+
+<div id="shedfiles" class="wrapper">
+
+    <h1>Schedule Files</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Uploaded By</th>
+                <th>PDF File</th>
+                <th>CSV File</th>
+                <th>Uploaded Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+                <tr>
+                    <td>{{ file.uploaded_by }}</td>
+                    <td>{{ file.fnamePDF }}</td>
+                    <td>{{ file.fnameCSV }}</td>
+                    <td>{{ file.date }}</td>
+                    <td><a class="deletebtn" href="{% url 'urldelschedule' file.id %}">delete</a></td>
+                </tr>        
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

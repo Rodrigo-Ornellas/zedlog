@@ -1,0 +1,33 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+
+<div id="listcontainers" class="wrapper">
+
+    <h1>Inventory</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Container</th>
+                <th>Type</th>
+                <th>Active</th>
+                <th>Last UpDate</th>
+                <th>Last POD</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in containers %}
+                <tr>
+                    <td>{{ c.serial }}</td>
+                    <td>{{ c.ctype }}</td>
+                    <td>{{ c.isActive }}</td>
+                    <td>{{ c.lastUpdate }}</td>
+                    <td>{{ c.pod }}</td>
+                </tr>        
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

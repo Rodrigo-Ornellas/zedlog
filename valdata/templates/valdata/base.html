@@ -23,13 +23,23 @@
             <nav>
                 <ul>
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'urllistschedule' %}">Calendar</a></li>
-                    <li><a href="{% url 'urlscheduleget' %}">Schedule</a></li>
-                    <li><a href="{% url 'urlcsvupload' %}">Upload Data</a></li>
-                    <li><a href="{% url 'urlcsvdata' %}">View Data</a></li>
-                    <li><a href="{% url 'urlportfiles' %}">Manage Files</a></li>
-                    {% comment %} <li><a href="{% url 'urlgraph' %}">Dashboard</a></li> {% endcomment %}
-                    <li><a href="{% url 'urlvsllist' %}">View Trips</a></li>
+                    <li class="schedMenu">Vessels
+                        <ul class="schedItems">
+                            <li><a href="{% url 'urllistschedule' %}">View</a></li>
+                            <li><a href="{% url 'urlscheduleget' %}">Update</a></li>
+                            <li><a href="{% url 'urlfilesschedule' %}">Files</a></li>
+                        </ul>
+                    </li>
+                    <li class="portMenu">PortData
+                        <ul class="portItems">
+                            <li><a href="{% url 'urlcsvdata' %}">View</a></li>
+                            <li><a href="{% url 'urlcsvupload' %}">Upload</a></li>
+                            <li><a href="{% url 'urlportfiles' %}">Files</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'urllistinventory' %}">Containers</a></li>
+                    <li><a href="{% url 'urllistports' %}">Ports</a></li>
+                    {% comment %} <li><a href="{% url 'urlvsllist' %}">View Trips</a></li> {% endcomment %}
                     {% comment %} <li><a href="{% url 'urlvsldash' trip=21 %}">Vessel</a></li> {% endcomment %}
                     {% comment %} <li><a href="{% url 'admin:index' %}">Admin</a></li> {% endcomment %}
                     <li class="userMenu"><a href="{% url 'logout' %}">Logout</a></li>

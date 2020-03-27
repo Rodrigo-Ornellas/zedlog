@@ -7,7 +7,8 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Vessel</th>
+                <th>Vessel Name</th>
+                <th>Vessel Alt</th>
                 <th>Line</th>
                 <th>Cut Off</th>
                 <th>ETA</th>
@@ -19,7 +20,8 @@
         <tbody>
             {% for vsl in vessel %}
                 <tr>
-                    <td>{{ vsl.vslfull }}</td>
+                    <td>{{ vsl.vnameA }}</td>
+                    <td>{{ vsl.vnameB }}</td>
                     <td>{{ vsl.line }}</td>
                     <td>{{ vsl.cutoffDate|date:'M d - H:i' }}</td>
                     <td>{{ vsl.shipETAdate|date:'M d' }}</td>

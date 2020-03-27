@@ -1,0 +1,31 @@
+{% extends 'valdata/base.html' %}
+
+{% block main %}
+
+<div id="listportname" class="wrapper">
+
+    <h1>Port Names</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Port Name</th>
+                <th>Agent Name</th>
+                <th>Full Name</th>
+                <th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in ports %}
+                <tr>
+                    <td>{{ p.portName }}</td>
+                    <td>{{ p.agentName }}</td>
+                    <td>{{ p.fullName }}</td>
+                    <td>{{ p.country }}</td>
+                </tr>        
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
