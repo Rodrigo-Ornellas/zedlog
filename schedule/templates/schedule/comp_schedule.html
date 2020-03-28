@@ -2,8 +2,9 @@
 
 <div id="schedule" class="wrapper">
 
-    <h1>Ship Schedules</h1>
+    <h1><i class="fas fa-ship"></i>&emsp;Ship Schedules</h1>
 
+    {% if vessel %}
     <table class="table">
         <thead>
             <tr>
@@ -32,6 +33,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p>No data available to be displayed.</p>
+    {% endif %}
 
 </div>
 

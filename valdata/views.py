@@ -121,11 +121,10 @@ def PORTFL_Upload(request):
                 instance.save()
 
                 # This gets the file data (PORTData) and saves to database
-                stats = PORTDT_SaveData(instance)
-                print("stats from PORTFL_Upload > {}".format(stats))
-                if stats.startswith('OKK'):
+                try:
+                    PORTDT_SaveData(instance)
                     return redirect('urlcsvdata')
-                else:
+                except:
                     return redirect('urlmessage', msg='Fatal Error: (from PORTDT_SaveData view) error while uploading file.')
             # except:
             #    return redirect('urlmessage', msg='Fatal Error: (from PORTFL_Upload view) error while uploading file.')
@@ -266,20 +265,12 @@ def PORTDT_SaveData(passedFile):
 
     # START reading the file
     data_set = csv_file.read().decode('UTF-8')
-    # print(data_set)
     io_string = io.StringIO(data_set)
-    # print(io_string)
     next(io_string)
 
-
-    vesselID = ''
-    # executed = 0
-    # totrows = 0
     # loop through each column in each line    
+    vesselID = ''
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-
-        # counters control
-        # totrows += 1
 
         # PRINT ALL COLUMNS
         print(column)
@@ -295,10 +286,6 @@ def PORTDT_SaveData(passedFile):
         # print ("vesselID > {}".format(vesselID))
         if vesselID != '':
             
-            # counters control
-            # executed += 1
-            # print ("ENTERED <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< {}".format(executed))
-
             # Check and Update List of Ports in the DataBase
             portObj = CheckPort(column[7])
 
@@ -318,48 +305,45 @@ def PORTDT_SaveData(passedFile):
 
             # Get new version of the UpLoaded Data
             ver = getVersion(vesselID)
+
             # print("version > {}".format(ver))
             # print("color > {}".format(RamdomColor()))
-        
             # Add VesselPortData connection to the DataBase
             vpd, created = VPDConnector.objects.update_or_create(vsl=vesselID, version=ver, vcolor=RamdomColor())
             
             # print("VPDConnerctor > {}".format(vpd))
             # print("vesselID.vcode > {}".format(vesselID.vnameA))
             # print(" linha {}".format(executed))
-            # z = False
-            if False:
-                _, created = PortData.objects.update_or_create(
-                    # ** numero de identificacao do container
-                    filefk      = passedFile,
-                    vessel      = vesselID,          # vessel object
-                    connector   = vpd,
-                    serial      = contObject,
-                    tipo        = column[1],           # ** tipo e tamanho do container
-                    location    = column[4],       # trem / truck ou yard
-                    full        = column[6],           # freight kind = full ou empty
-                    pod         = portObj,               # ** pod = port of destination
-                    position    = column[8],       # posição no trem ou truck ou yard
-                    booking     = column[9],        # ** registro da ZIM
-                    peso        = column[12],          # peso total do container
-                    carga       = column[13],         # peso da carga
-                    arrival     = cDate,            # time of arrival to YARD
-                    # em reparo ou onhold para proximo navio
-                    onhold      = column[16],
-                    commodity   = column[17],     # descrição da carga
-                    haz         = column[18],           # hazerdous material
-                    reefer      = column[19],        # quando necessita de refrigeração
-                    ondock      = column[21],        # arrived to terminal
-                    oog         = column[22],
-                    # carga especial com dimensões especiais - necessita de procedimentos especiais
-                )
+            _, created = PortData.objects.update_or_create(
+                # ** numero de identificacao do container
+                filefk      = passedFile,
+                vessel      = vesselID,          # vessel object
+                connector   = vpd,
+                serial      = contObject,
+                tipo        = column[1],           # ** tipo e tamanho do container
+                location    = column[4],       # trem / truck ou yard
+                full        = column[6],           # freight kind = full ou empty
+                pod         = portObj,               # ** pod = port of destination
+                position    = column[8],       # posição no trem ou truck ou yard
+                booking     = column[9],        # ** registro da ZIM
+                peso        = column[12],          # peso total do container
+                carga       = column[13],         # peso da carga
+                arrival     = cDate,            # time of arrival to YARD
+                # em reparo ou onhold para proximo navio
+                onhold      = column[16],
+                commodity   = column[17],     # descrição da carga
+                haz         = column[18],           # hazerdous material
+                reefer      = column[19],        # quando necessita de refrigeração
+                ondock      = column[21],        # arrived to terminal
+                oog         = column[22]
+                # carga especial com dimensões especiais - necessita de procedimentos especiais
+            )
 
-            # print ("totrows > {}".format(totrows))
-            # print ("executed > {}".format(executed))
+            # return 'OKK > PortData saved SUCCESSFULLY!'
+        # else:
+            # return 'ERR > PortData ERROR - data NOT saved!'
 
-            return 'OKK > PortData saved SUCCESSFULLY!'
-        else:
-            return 'ERR > PortData ERROR - data NOT saved!'
+        # print('<<<<<<<      next ITEM      >>>>>>')
 
 
 def getVersion(code):

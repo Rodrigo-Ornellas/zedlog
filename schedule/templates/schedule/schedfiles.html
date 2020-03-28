@@ -4,8 +4,9 @@
 
 <div id="shedfiles" class="wrapper">
 
-    <h1>Schedule Files</h1>
+    <h1><i class="fas fa-folder-open"></i>&emsp;Schedule Files</h1>
 
+    {% if files %}
     <table class="table">
         <thead>
             <tr>
@@ -28,6 +29,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p>No data available to be displayed.</p>
+    {% endif %}
 
 </div>
 {% endblock %}

@@ -193,6 +193,53 @@ nav ul li a {
       font-weight: 600;
 }
 
+.thebody {
+      position: relative;
+}
+
+nav .topMenu {
+      display: flex;
+      align-items: center;
+
+      position: absolute;
+      top: -43px;
+      right: 0;
+}
+
+.schedMenu .schedItems {
+      display: flex;
+      flex-flow: column nowrap;
+      width: 150px;
+      margin-right: 0;
+      color: whitesmoke;
+}
+
+.schedMenu .schedItems li:not(:first-of-type) {
+      display: none;
+}
+
+.schedMenu .schedItems:hover li {
+      display: block;
+      z-index: 999;
+}
+
+.schedMenu .schedItems:hover li:not(:first-of-type) a {
+      color: indigo;
+}
+
+.schedMenu .schedItems:hover li:not(:first-of-type) {
+      background-color: lightgray;
+}
+
+.schedMenu .schedItems li:not(:first-of-type):hover {
+      background-color: whitesmoke;
+}
+
+header #logo {
+      position: absolute;
+      top: 0.5rem;
+}
+
 /* ===================  TABLE  ========================= */
 /* ======================================================================== */
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.http import HttpResponse, Http404
@@ -26,7 +26,10 @@ def listSchedule(request):
     # this VIEW lists all vessels
     # =============================================    
     data = {}
-    data['vessel'] = Vessels.objects.filter(shipETAdate__gte=datetime.now()-timedelta(days=21))
+    monthAhead = datetime.now()+timedelta(days=30)
+    monthBehind = datetime.now()-timedelta(days=60)
+    data['vessel'] = Vessels.objects.filter(shipETAdate__range=[monthBehind, monthAhead]).order_by('shipETAdate')
+    # data['vessel'] = Vessels.objects.filter(shipETAdate__gte=datetime.now()-timedelta(days=21))
     return render(request, 'schedule/schedule.html', data)
 
 
@@ -96,8 +99,8 @@ def downPDF(request):
     print('fnamePDF > {}'.format(fnamePDF))
 
     #  URL from where the FILE will be downloaded
-    # url = "http://localhost:9003/"
-    url = "http://webservices.globalterminalscanada.com/sites/default/files/DPVesselSchedule.pdf"
+    url = "http://localhost:9003/"
+    #url = "http://webservices.globalterminalscanada.com/sites/default/files/DPVesselSchedule.pdf"
 
     # save the PDF file
     urlretrieve(url, fnamePDF)
@@ -159,10 +162,11 @@ def saveSchedule(request):
                     shipETDdate = convertDate(column[10] + " " + column[11], "midway"),
             )
 
-    monthAhead = datetime.now()+timedelta(days=30)
-    monthBehind = datetime.now()-timedelta(days=60)
-    data['vessel'] = Vessels.objects.filter(shipETAdate__range=[monthBehind, monthAhead])
-    return render(request, 'schedule/schedule.html', data)
+    # monthAhead = datetime.now()+timedelta(days=30)
+    # monthBehind = datetime.now()-timedelta(days=60)
+    # data['vessel'] = Vessels.objects.filter(shipETAdate__range=[monthBehind, monthAhead]).order_by('shipETAdate')
+    # return render(request, 'schedule/schedule.html', data)
+    return redirect('urllistschedule')
 
 
 

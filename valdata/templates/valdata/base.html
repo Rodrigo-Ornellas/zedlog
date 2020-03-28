@@ -21,20 +21,22 @@
             </a>
             <input type="checkbox" id="nav-toggle" class="nav-toggle" >
             <nav>
-                <ul>
+                <ul class="topMenu">
                     {% if user.is_authenticated %}
-                    <li class="schedMenu">Vessels
+                    <li class="schedMenu">
                         <ul class="schedItems">
-                            <li><a href="{% url 'urllistschedule' %}">View</a></li>
-                            <li><a href="{% url 'urlscheduleget' %}">Update</a></li>
-                            <li><a href="{% url 'urlfilesschedule' %}">Files</a></li>
+                            <li class="menuHead">Vessels</li>
+                            <li class="menuItem"><a href="{% url 'urllistschedule' %}">View</a></li>
+                            <li class="menuItem"><a href="{% url 'urlscheduleget' %}">Update</a></li>
+                            <li class="menuItem"><a href="{% url 'urlfilesschedule' %}">Files</a></li>
                         </ul>
                     </li>
-                    <li class="portMenu">PortData
-                        <ul class="portItems">
-                            <li><a href="{% url 'urlcsvdata' %}">View</a></li>
-                            <li><a href="{% url 'urlcsvupload' %}">Upload</a></li>
-                            <li><a href="{% url 'urlportfiles' %}">Files</a></li>
+                    <li class="schedMenu">
+                        <ul class="schedItems">
+                            <li class="menuHead">PortData</li>
+                            <li class="menuItem"><a href="{% url 'urlcsvdata' %}">View</a></li>
+                            <li class="menuItem"><a href="{% url 'urlcsvupload' %}">Upload</a></li>
+                            <li class="menuItem"><a href="{% url 'urlportfiles' %}">Files</a></li>
                         </ul>
                     </li>
                     <li><a href="{% url 'urllistinventory' %}">Containers</a></li>

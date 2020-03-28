@@ -5,24 +5,17 @@
 
     <h1>Admin Message</h1>
     {% if user.is_authenticated %}
-
-    <div class="tool">
-        <h4>Message</h4>
-        {% if msg %}
-        <p>{{ msg }}</p>
-        {% endif%}
-        <a class="botao" href="{% url 'urlindex' %}">Home</a>
-    </div>
-
-
+        <div class="tool">
+            <h4>Message</h4>
+            {% if msg %}
+            <p>{{ msg }}</p>
+            {% endif%}
+            <a class="botao" href="{% url 'urlindex' %}">Home</a>
+        </div>
     {% else %}
-
-    <div class="tool">
-
-        <p>Your are not logged in the ZEDLOG tool. Please proceed login before continuing.</p>
-        
-    </div>
-
+        <div class="tool">
+            <p>Your are not logged in the ZEDLOG tool. Please proceed login before continuing.</p>
+        </div>
     {% endif%}
 
 </div>

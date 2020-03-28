@@ -31,5 +31,8 @@ class Vessels(models.Model):
 
 
     def __str__(self):
-        return ('%s - %s - %s - %s' % (self.pk, self.vnameA, self.vnameB, self.portName))
+        if (self.vnameB != ''):
+            return ('%s / %s' % (self.vnameA, self.vnameB))
+        else: 
+            return ('%s' % (self.vnameA))
 

@@ -4,8 +4,9 @@
 
 <div id="portdata" class="wrapper">
 
-    <h1>Port Data Files</h1>
+    <h1><i class="fas fa-folder-open"></i>&emsp;Port Data Files</h1>
 
+    {% if pd %}
     <table class="table">
         <thead>
             <tr>
@@ -26,6 +27,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p>No data available to be displayed.</p>
+    {% endif %}
 
 </div>
 {% endblock %}

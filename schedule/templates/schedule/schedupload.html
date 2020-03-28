@@ -6,6 +6,7 @@
 
     <h2>Shedule Files</h2>
 
+    {% if data %}
     <table class="table">
         <thead>
             <tr>
@@ -26,6 +27,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p>No data available to be displayed.</p>
+    {% endif %}
 
 </div>
 {% endblock %}

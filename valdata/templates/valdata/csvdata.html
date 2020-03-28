@@ -3,11 +3,14 @@
 {% block main %}
 <div id="csvdata" class="wrapper">
 
-    <h1>Port Data Uploaded</h1>
+    <h1><i class="fas fa-database"></i>&emsp;Port Data Uploaded</h1>
+
+    {% if csv %}
 
     <table class="table">
         <thead>
             <tr>
+                <th>Vessel</th>
                 <th>Container</th>
                 <th>Type</th>
                 <th>POD</th>
@@ -18,6 +21,7 @@
         <tbody>
             {% for container in csv %}
                 <tr>
+                    <td>{{ container.vessel }}</td>
                     <td>{{ container.serial }}</td>
                     <td>{{ container.tipo }}</td>
                     <td>{{ container.pod }}</td>
@@ -27,6 +31,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+        <p>No data available to be displayed.</p>
+    {% endif %}
     
 </div>
 {% endblock %}
