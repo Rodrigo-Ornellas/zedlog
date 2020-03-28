@@ -128,8 +128,12 @@ dmypy.json
 
 
 # Folders Not Sync
+images/
 server/
 xls/
 zip/
 .vscode/
 .DS_Store
+.pyc
+.xls
+.csv
