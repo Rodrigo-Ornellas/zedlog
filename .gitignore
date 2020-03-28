@@ -137,3 +137,4 @@ zip/
 .pyc
 .xls
 .csv
+.sqlite3
